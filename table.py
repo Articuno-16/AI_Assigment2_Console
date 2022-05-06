@@ -1,5 +1,5 @@
 from copy import deepcopy
-
+import tkinter as tk
 class Cell:
     def __init__(self, index, score):
         self.index = index
@@ -96,6 +96,7 @@ class Table:
                 return cell1Next, cell2Next
         return None, None
 
+    # Moving function
     def moving(self, player, index, direction):
         text = 'Turn {}: {} chọn ô {}, hướng {}'
         print(text.format(self.i + 1,player, index, direction))
@@ -164,6 +165,28 @@ class Table:
         if arr is None:
             arr = self.initTable(self.state)
         print(self.draw.format(*arr)) 
+
+    def finished(self):
+        '''Checking whether if Game is finished'''
+        if finished(self.state):
+            # If point of player 0 > player 1 than you won
+            if self.player_points[0] > self.player_points[1]:
+                result = 'You won'
+            # If point of player 0 < player 1 than computer won
+            elif self.player_points[0] < self.player_points[1]:
+                result = 'Computer won'
+            # If equal than draw
+            else: 
+                result = 'Draw'
+            # Show the message box to inform the result
+            while True:
+                tk.Tk().wm_withdraw()  # to hide the main window
+                messagebox.showinfo('End Game !', 'Result: ' + result)
+                time.sleep(2)
+                break
+            return True
+        else:
+            return False
     
 #box = Table()
 #box.consoleTable(None)
@@ -171,3 +194,5 @@ class Table:
 #box.movingTurn(player='player1', index=0, direction='Left')
 # box.movingTurn(player='player1', index=2, direction='Left')
 
+def finished(_state):
+    return  _state[0] == [0, 2] and _state[6] == [0, 2]
