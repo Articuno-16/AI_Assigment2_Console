@@ -3,7 +3,7 @@ import pygame,sys
 import os
 from agent import Agent, Human, RandomAgent
 
-from GUI import TableGUI,SCREEN_WIDTH,SCREEN_HEIGHT,SCREEN_CAPTION,USER_GO_FIRST
+from GUI import TableGUI,SCREEN_WIDTH,SCREEN_HEIGHT,SCREEN_CAPTION,USER_GO_FIRST,RES
 
 
 
@@ -18,10 +18,11 @@ def text_to_screen(screen, text, x, y, fontsize, color):
         print('Font Error')
         raise e
 def getMenu(screen,font,fontbig):
+    background = pygame.image.load(os.path.join(RES, 'background.png')) 
+    screen.blit(background, (0, 0))
     pygame.display.set_caption("Madarin Capture Square")
-    screen.fill((0,0,0))
     color=(255,255,255)
-    label = fontbig.render(' MADARIN CAPTURE SQUARE ', True, (253,205,23))
+    label = fontbig.render(' MADARIN CAPTURE SQUARE ', True, (255,255,23))
     noti = font.render(' Press To Play: ', True, color)
     text1 = font.render(' A - Easy', True, color)
     text2 = font.render(' B - Medium', True, color)
@@ -42,7 +43,9 @@ def getMenu(screen,font,fontbig):
                     return "Medium"
                 if event.key == pygame.K_c:
                     return "hard"
-                
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()	
             pygame.display.flip()
 
 class Game:
@@ -86,7 +89,8 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                    pygame.quit();sys.exit()		
+                    pygame.quit()
+                    sys.exit()		
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
                         self.reset()
@@ -99,7 +103,6 @@ class Game:
             print(f"USER_{turn}'s move: {move[0]} {move[1]}")
             turn ^= 1
             self.redraw(turn)
-            print(self.table)
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

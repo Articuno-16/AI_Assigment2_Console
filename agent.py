@@ -22,12 +22,12 @@ class RandomAgent(Agent):
         pos = 0
         if self.player_id:
             while True:
-                pos = randint(6, 10)
+                pos = randint(7, 11)
                 if state_game[pos][0] != 0:
                     break
         else:
             while True:
-                pos = randint(0,4)
+                pos = randint(1, 5)
                 if state_game[pos][0] != 0:
                     break
         return pos, choice(['Left', 'Right'])
@@ -43,7 +43,7 @@ class Human(Agent):
         isClicked = False
 
         available_boxes = []
-        for i in range(1,6):
+        for i in range(6,11):
             if state_game[i][0] > 0:
                 available_boxes.append(i)
 
@@ -64,7 +64,7 @@ class Human(Agent):
 
             if 240 < y < 340:
                 if 160 < x < 260:
-                    move[0] = 1
+                    move[0] = 6
                     if move[0] not in available_boxes:
                         continue
 
@@ -78,7 +78,7 @@ class Human(Agent):
                         move[1] = 'Left' if x < 210 else 'Right'
 
                 elif 260 < x < 360:
-                    move[0] = 2
+                    move[0] = 7
                     if move[0] not in available_boxes:
                         continue
 
@@ -91,7 +91,7 @@ class Human(Agent):
                     if isClicked:
                         move[1] = 'Left' if x < 310 else 'Right'
                 elif 360 < x < 460:
-                    move[0] = 3
+                    move[0] = 8
                     if move[0] not in available_boxes:
                         continue
 
@@ -104,7 +104,7 @@ class Human(Agent):
                     if isClicked:
                         move[1] = 'Left' if x < 410 else 'Right'
                 elif 460 < x < 560:
-                    move[0] = 4
+                    move[0] = 9
                     if move[0] not in available_boxes:
                         continue
 
@@ -117,7 +117,7 @@ class Human(Agent):
                     if isClicked:
                         move[1] = 'Left' if x < 510 else 'Right'
                 elif 560 < x < 660:
-                    move[0] = 5
+                    move[0] = 10
                     if move[0] not in available_boxes:
                         continue
 
@@ -141,36 +141,3 @@ class Human(Agent):
                 break
         return move[0], move[1]
     
-# class Agent:
-#     def __init__(self, player_id, algo=None, screen=None, table=None):
-#         self.INF = 70
-#         self.quanvalue = QUANVALUE
-#         self.player_id = player_id
-#         self.algo = algo
-#         self.screen = screen
-#         self.table = table
-
-#     def random_algo(self, state_game):
-#         pos = 0
-#         if self.player_id:
-#             while True:
-#                 pos = randint(7, 11)
-#                 if state_game[pos][0] != 0:
-#                     break
-#         else:
-#             while True:
-#                 pos = randint(1, 5)
-#                 if state_game[pos][0] != 0:
-#                     break
-        
-#         return pos, choice(['Left', 'Right'])
-
-       
-
-#     def execute(self, state_game_, cur_point_, depth=3):
-#         state_game, cur_point = deepcopy(state_game_), deepcopy(cur_point_)
-
-#         if self.algo is None:       # human play
-#             return self.human(state_game, cur_point)
-#         elif self.algo is 'random':  # random agent
-#             return self.random_algo(state_game)
