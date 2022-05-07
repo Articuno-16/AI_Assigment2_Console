@@ -84,14 +84,25 @@ class Table:
     def isEatPoints(self, cell1, cell2):
         return True if cell1.score == 0 and cell2.score != 0 else False
 
+    def addScore(self, player, cell2):
+        # Nếu ô ăn được là ô quan và có chứa quan thì + 5 điểm + số điểm ăn được hiện tại
+        if cell2.isQuanCell and self.state[cell2.index][1] == 1:
+            if player == 'player1': 
+                self.player1Score += 5 + cell2.score 
+            else: 
+                self.player2Score += 5 + cell2.score
+            self.state[cell2.index][1] = 0
+
+        self.state[cell2.index][0] = 0
+        self.consoleTable()
+
 
     # return None, None nếu dừng, return 2 cell tiếp theo nếu ăn tiếp
-    def eatCells(self, cell1, cell2, direction):
+    def eatCells(self, player, cell1, cell2, direction):
         print('Ăn điểm!')
-        self.playerScore[0] += cell2.score
-        self.state[cell2.index][0] = 0
-        print (self.state[cell2.index][0])
-        self.consoleTable(None)
+        
+        self.addScore(player, cell2)
+
         if direction == 'Right':
             nextIndex = cell2.index + 1
             nextnextIndex = nextIndex + 1  
@@ -104,12 +115,11 @@ class Table:
         if nextnextIndex > 11 or nextnextIndex < 0:
             nextnextIndex = self.handleNextIndex(nextnextIndex)
 
-        if (0 < nextIndex < 12 and 0 < nextnextIndex < 12):
-            cell1Next = Cell(nextIndex, self.state[nextIndex][0])
-            cell2Next = Cell(nextnextIndex, self.state[nextnextIndex][0])
-            if (self.isEatPoints(cell1Next, cell2Next)):
-                return cell1Next, cell2Next
-        return None, None
+        cell1Next = Cell(nextIndex, self.state[nextIndex][0])
+        cell2Next = Cell(nextnextIndex, self.state[nextnextIndex][0])
+        if (self.isEatPoints(cell1Next, cell2Next)):
+            return cell1Next, cell2Next
+        return None
 
     # Moving function
     def moving(self, player, index, direction):
@@ -131,8 +141,7 @@ class Table:
             nextnextIndex = nextIndex-1
 
         self.saveState(array)
-        arr = self.initTable(self.state)
-        print(self.draw.format(*arr))
+        self.consoleTable()
         
         if nextIndex > 11 or nextIndex < 0:
             nextIndex = self.handleNextIndex(nextIndex)
@@ -153,7 +162,6 @@ class Table:
         
         while c1 is not None and c2 is not None:
             c1, c2 = self.handleMoving(player, c1.index, direction)
-            # if c1 is not None and c2 is not None: print(c1.index, c2.index)
 
 
     def handleMoving(self, player, index, direction):
@@ -166,10 +174,11 @@ class Table:
         # ăn điểm
         if self.isEatPoints(cell1, cell2):
             keepEating = self.eatCells(cell1, cell2, direction)
-            if keepEating is None: 
-                print(keepEating[0].index, keepEating[1].index)
-                return keepEating[0], keepEating[1]
-            return None, None
+            if keepEating is None:
+                print('Change Turn!')    
+                return None, None  
+            print(keepEating[0].index, keepEating[1].index)
+            return keepEating[0], keepEating[1]
         
         # đi tiếp
         elif cell1.score != 0:
