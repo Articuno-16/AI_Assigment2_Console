@@ -145,3 +145,5 @@ class Agent:
 
         if self.algo is None:  ## human play
             return self.human(state_game, cur_point)
+        elif self.algo is 'random':  ## human play
+            return self.random_algo(state_game)

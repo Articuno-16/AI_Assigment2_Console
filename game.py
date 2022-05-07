@@ -1,3 +1,4 @@
+from time import sleep
 import pygame,sys
 import os
 from agent import Agent
@@ -51,9 +52,11 @@ class Game:
                     running = False
                     pygame.quit();sys.exit()					
             move = self.players[turn].execute(self.table.state, self.table.playerScore)
+            print(move)
             self.update(turn,move)
 
             print(f"USER_{turn}'s move: {move[0]} {move[1]}")
+            sleep(1)
             turn ^= 1
             self.redraw(turn)
             print(self.table)
