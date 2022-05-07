@@ -30,7 +30,7 @@ class Agent:
                 if state_game[pos][0] != 0:
                     break
         
-        return pos, choice(['l', 'r'])
+        return pos, choice(['Left', 'Right'])
 
     def human(self, state_game, cur_point):
         move = [None, None]
@@ -73,7 +73,7 @@ class Agent:
                         old_box = move[0]
 
                     if isClicked:
-                        move[1] = 'l' if x < 210 else 'r'
+                        move[1] = 'Left' if x < 210 else 'Right'
 
                 elif 260 < x < 360:
                     move[0] = 2
@@ -87,7 +87,7 @@ class Agent:
                         old_box = move[0]
 
                     if isClicked:
-                        move[1] = 'l' if x < 310 else 'r'
+                        move[1] = 'Left' if x < 310 else 'Right'
                 elif 360 < x < 460:
                     move[0] = 3
                     if move[0] not in available_boxes:
@@ -100,7 +100,7 @@ class Agent:
                         old_box = move[0]
 
                     if isClicked:
-                        move[1] = 'l' if x < 410 else 'r'
+                        move[1] = 'Left' if x < 410 else 'Right'
                 elif 460 < x < 560:
                     move[0] = 4
                     if move[0] not in available_boxes:
@@ -113,7 +113,7 @@ class Agent:
                         old_box = move[0]
 
                     if isClicked:
-                        move[1] = 'l' if x < 510 else 'r'
+                        move[1] = 'Left' if x < 510 else 'Right'
                 elif 560 < x < 660:
                     move[0] = 5
                     if move[0] not in available_boxes:
@@ -126,7 +126,7 @@ class Agent:
                         old_box = move[0]
 
                     if isClicked:
-                        move[1] = 'l' if x < 610 else 'r'
+                        move[1] = 'Left' if x < 610 else 'Right'
                 else:
                     self.table.redraw(0)
                     old_box = 0

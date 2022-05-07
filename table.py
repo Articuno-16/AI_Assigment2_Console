@@ -6,6 +6,21 @@ class Cell:
         self.isQuanCell = True if self.index == 5 or self.index == 11 else False
         self.score = score
 
+### Deadline : 16h - 17h họp lại
+
+## Hiện thực trên console
+# Mượn quân: Nếu như bên mình không có quân thì thực hiện bằng cách trả điểm rãi vào mỗi ô 1 quân
+# Điều kiện dừng (finished())
+# Tính điểm trò chơi lúc nó kết thúc 
+# Test lại tính đúng đắn 
+# Hàm di chuyển (movingTurn())
+
+## GUI
+# Điều chỉnh lại tọa độ của mấy cái state
+
+## Game 
+# Hiện thực lại cái frame để chạy
+# Hiện lên cửa sổ chọn mức độ trò chơi
 class Table:  
     def __init__(self):
         self.draw = '''
@@ -188,11 +203,6 @@ class Table:
         else:
             return False
     
-#box = Table()
-#box.consoleTable(None)
-# box.movingTurn(player='player1', index=0, direction='Right')
-#box.movingTurn(player='player1', index=0, direction='Left')
-# box.movingTurn(player='player1', index=2, direction='Left')
 
 def finished(_state):
-    return  _state[0] == [0, 2] and _state[6] == [0, 2]
+    return  _state[0] == [0, 0] and _state[6] == [0, 0]

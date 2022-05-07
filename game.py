@@ -34,17 +34,16 @@ class Game:
     def finished(self):
         return self.table.finished()
 
-    def update(self, move):
+    def update(self,turn, move):
         # Chỉnh lại khúc này
-        self.table.play(move) 
+        self.table.movingTurn('player{}'.format(turn),move[0],move[1])
 
     def run(self):
-        # setup
-        # executor = concurrent.futures.ThreadPoolExecutor(max_workers=10)
+        # User go first or agent go first
         turn = 0 if USER_GO_FIRST else 1
         running = True
 
-        # loop
+        # Game loop
         self.redraw(turn)
         while not self.finished():
             for event in pygame.event.get():
@@ -52,15 +51,12 @@ class Game:
                     running = False
                     pygame.quit();sys.exit()					
             move = self.players[turn].execute(self.table.state, self.table.playerScore)
-            self.update(move)
+            self.update(turn,move)
 
             print(f"USER_{turn}'s move: {move[0]} {move[1]}")
-            # text_to_screen(self.screen, "User", 0, 0, 30, (123, 123, 123))
-
             turn ^= 1
             self.redraw(turn)
             print(self.table)
-
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
