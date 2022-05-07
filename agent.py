@@ -1,7 +1,7 @@
 import pygame
 from table import finished
 import os
-from config import *
+from GUI import RES,QUANVALUE
 from random import randint,choice,shuffle
 import sys
 from copy import deepcopy
@@ -9,30 +9,33 @@ Lbutton = pygame.image.load(os.path.join(RES, 'left.png'))
 Rbutton = pygame.image.load(os.path.join(RES, 'right.png'))
 
 class Agent:
-    def __init__(self, player_id, algo=None, screen=None, table=None):
+    def __init__(self, player_id, screen=None, table=None):
         self.INF = 70
         self.quanvalue = QUANVALUE
         self.player_id = player_id
-        self.algo = algo
         self.screen = screen
         self.table = table
-
-    def random_algo(self, state_game):
+class RandomAgent(Agent):
+    def __init__(self, player_id, screen, table):
+        super().__init__(player_id, screen, table)
+    def execute(self,state_game):
         pos = 0
         if self.player_id:
             while True:
-                pos = randint(7, 11)
+                pos = randint(6, 10)
                 if state_game[pos][0] != 0:
                     break
         else:
             while True:
-                pos = randint(1, 5)
+                pos = randint(0,4)
                 if state_game[pos][0] != 0:
                     break
-        
         return pos, choice(['Left', 'Right'])
+class Human(Agent):
+    def __init__(self, player_id, screen, table):
+        super().__init__(player_id, screen, table)
 
-    def human(self, state_game, cur_point):
+    def execute(self,state_game):
         move = [None, None]
         old_box = 0
         self.table.redraw(0)
@@ -58,7 +61,6 @@ class Agent:
 
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         isClicked = True
-
 
             if 240 < y < 340:
                 if 160 < x < 260:
@@ -130,7 +132,6 @@ class Agent:
                 else:
                     self.table.redraw(0)
                     old_box = 0
-
             else:
                 self.table.redraw(0)
                 old_box = 0
@@ -139,11 +140,37 @@ class Agent:
             if move[0] is not None and move[1] is not None:
                 break
         return move[0], move[1]
+    
+# class Agent:
+#     def __init__(self, player_id, algo=None, screen=None, table=None):
+#         self.INF = 70
+#         self.quanvalue = QUANVALUE
+#         self.player_id = player_id
+#         self.algo = algo
+#         self.screen = screen
+#         self.table = table
 
-    def execute(self, state_game_, cur_point_, depth=3):
-        state_game, cur_point = deepcopy(state_game_), deepcopy(cur_point_)
+#     def random_algo(self, state_game):
+#         pos = 0
+#         if self.player_id:
+#             while True:
+#                 pos = randint(7, 11)
+#                 if state_game[pos][0] != 0:
+#                     break
+#         else:
+#             while True:
+#                 pos = randint(1, 5)
+#                 if state_game[pos][0] != 0:
+#                     break
+        
+#         return pos, choice(['Left', 'Right'])
 
-        if self.algo is None:  ## human play
-            return self.human(state_game, cur_point)
-        elif self.algo is 'random':  ## human play
-            return self.random_algo(state_game)
+       
+
+#     def execute(self, state_game_, cur_point_, depth=3):
+#         state_game, cur_point = deepcopy(state_game_), deepcopy(cur_point_)
+
+#         if self.algo is None:       # human play
+#             return self.human(state_game, cur_point)
+#         elif self.algo is 'random':  # random agent
+#             return self.random_algo(state_game)
