@@ -41,7 +41,8 @@ class Table:
                 0  1  2  3  4
         '''
 
-        self.playerScore = [0, 0]
+        self.player1Score = 0
+        self.player2Score = 0
         self.state = [
             [5, 0], [5, 0], [5, 0], [5, 0], [5, 0], [0, 1],
             [5, 0], [5, 0], [5, 0], [5, 0], [5, 0], [0, 1]
@@ -173,7 +174,7 @@ class Table:
 
         # ăn điểm
         if self.isEatPoints(cell1, cell2):
-            keepEating = self.eatCells(cell1, cell2, direction)
+            keepEating = self.eatCells(player, cell1, cell2, direction)
             if keepEating is None:
                 print('Change Turn!')    
                 return None, None  
@@ -185,7 +186,7 @@ class Table:
             return cell1, cell2
                 
 
-    def consoleTable(self, arr):
+    def consoleTable(self, arr = None):
         if arr is None:
             arr = self.initTable(self.state)
         print(self.draw.format(*arr)) 
