@@ -52,7 +52,7 @@ COLOR = Color()
 ##################################################
 
 
-def text_to_screen(screen, text, x, y, fontsize, color):
+def to_screen(screen, text, x, y, fontsize, color):
     try:
         pygame.font.init()
         myfont = pygame.font.SysFont('Comic Sans MS', fontsize)
@@ -63,26 +63,7 @@ def text_to_screen(screen, text, x, y, fontsize, color):
         print('Font Error')
         raise e
 
-# def buttonpress (marginleft, marginright, marginup, margindown, xbuttonleft, ybuttonleft, xbuttonright, ybuttonright, flag, move0, move1, point):
-#     if point:
-#         mouse = pygame.mouse.get_pos()
 
-#         move0 = (marginleft - 60)/100
-
-#         if marginleft < mouse[0] < marginright and marginup < mouse[1] < margindown:
-#             flag = True
-#         if flag:
-#             screen.blit(Rbutton, (xbuttonright, ybuttonright))
-#             screen.blit(Lbutton,(xbuttonleft, ybuttonleft))
-#             for e in pygame.event.get():
-#                 if e.type == pygame.MOUSEBUTTONDOWN and xbuttonright < mouse[0] < xbuttonright+20 and ybuttonright < mouse[1] < ybuttonright+20:
-#                     print("Right Clicked!")
-#                     move1 = 'r'
-#                 if e.type == pygame.MOUSEBUTTONDOWN and xbuttonleft < mouse[0] < xbuttonleft+20 and ybuttonleft < mouse[1] < ybuttonleft+20:
-#                     print("Left Clicked!")
-#                     move1 = 'l'
-
-#     flag = False
 
 class TableGUI(Table):
     '''
@@ -100,36 +81,36 @@ class TableGUI(Table):
     def __draw_table(self, turn):
         self.screen.fill((255, 255, 255))
         self.screen.blit(background, (0, 0))
-        text_to_screen(self.screen, "Player 1", 200, 60, 25, COLOR.DARKRED)
-        text_to_screen(self.screen, str(self.playerScore[1]), 370, 40, 50, COLOR.DARKRED)
-        text_to_screen(self.screen, "Player 0", 470, 380, 25, COLOR.PURPLE)
-        text_to_screen(self.screen, str(self.playerScore[0]), 370, 365, 50, COLOR.PURPLE)
+        to_screen(self.screen, "Player 1", 200, 60, 25, COLOR.DARKRED)
+        to_screen(self.screen, str(self.playerScore[1]), 370, 40, 50, COLOR.DARKRED)
+        to_screen(self.screen, "Player 0", 470, 380, 25, COLOR.PURPLE)
+        to_screen(self.screen, str(self.playerScore[0]), 370, 365, 50, COLOR.PURPLE)
         if turn == 0:
-            text_to_screen(self.screen, "Player " + str(turn) + " is thinking...", 300, 450, 20 , COLOR.PURPLE)
+            to_screen(self.screen, "Player " + str(turn) + " is thinking...", 300, 450, 20 , COLOR.PURPLE)
         else:
-            text_to_screen(self.screen, "Player " + str(turn) + " is thinking...", 300, 10, 20, COLOR.RED)
-        # text_to_screen(self.screen, str(self.winner), 150, 250, 25, RED)
+            to_screen(self.screen, "Player " + str(turn) + " is thinking...", 300, 10, 20, COLOR.RED)
+        # to_screen(self.screen, str(self.winner), 150, 250, 25, RED)
 
 
 
         # So quan trong cac o
-        text_to_screen(self.screen, str(self.state[0][0]), 170, 250, 20, COLOR.ORANGE) #No. 1
-        text_to_screen(self.screen, str(self.state[1][0]), 270, 250, 20, COLOR.ORANGE) #No. 2
-        text_to_screen(self.screen, str(self.state[2][0]), 370, 250, 20, COLOR.ORANGE) #No. 3
-        text_to_screen(self.screen, str(self.state[3][0]), 470, 250, 20, COLOR.ORANGE) #No. 4
-        text_to_screen(self.screen, str(self.state[4][0]), 570, 250, 20, COLOR.ORANGE) #No. 5
-        text_to_screen(self.screen, str(self.state[6][0]), 170, 150, 20, COLOR.ORANGE) #No. 11
-        text_to_screen(self.screen, str(self.state[7][0]), 270, 150, 20, COLOR.ORANGE) #No. 10
-        text_to_screen(self.screen, str(self.state[8][0]), 370, 150, 20, COLOR.ORANGE) #No. 9
-        text_to_screen(self.screen, str(self.state[9][0]), 470, 150, 20, COLOR.ORANGE) #No. 8
-        text_to_screen(self.screen, str(self.state[10][0]), 570, 150, 20, COLOR.ORANGE) #No. 7
+        to_screen(self.screen, str(self.state[0][0]), 170, 250, 20, COLOR.ORANGE) #No. 1
+        to_screen(self.screen, str(self.state[1][0]), 270, 250, 20, COLOR.ORANGE) #No. 2
+        to_screen(self.screen, str(self.state[2][0]), 370, 250, 20, COLOR.ORANGE) #No. 3
+        to_screen(self.screen, str(self.state[3][0]), 470, 250, 20, COLOR.ORANGE) #No. 4
+        to_screen(self.screen, str(self.state[4][0]), 570, 250, 20, COLOR.ORANGE) #No. 5
+        to_screen(self.screen, str(self.state[6][0]), 170, 150, 20, COLOR.ORANGE) #No. 11
+        to_screen(self.screen, str(self.state[7][0]), 270, 150, 20, COLOR.ORANGE) #No. 10
+        to_screen(self.screen, str(self.state[8][0]), 370, 150, 20, COLOR.ORANGE) #No. 9
+        to_screen(self.screen, str(self.state[9][0]), 470, 150, 20, COLOR.ORANGE) #No. 8
+        to_screen(self.screen, str(self.state[10][0]), 570, 150, 20, COLOR.ORANGE) #No. 7
         
 
-        text_to_screen(self.screen, str(abs(self.state[5][1] - 2)), 120, 170, 30, COLOR.ORANGE)
-        text_to_screen(self.screen, str(self.state[5][0]), 120, 230, 20, COLOR.ORANGE) #No. 0
+        to_screen(self.screen, str(abs(self.state[5][1] - 2)), 120, 170, 30, COLOR.ORANGE)
+        to_screen(self.screen, str(self.state[5][0]), 120, 230, 20, COLOR.ORANGE) #No. 0
 
-        text_to_screen(self.screen, str(abs(self.state[11][1] - 2)), 670, 170, 30, COLOR.ORANGE)
-        text_to_screen(self.screen, str(self.state[11][0]), 670, 230, 20, COLOR.ORANGE) #No. 6
+        to_screen(self.screen, str(abs(self.state[11][1] - 2)), 670, 170, 30, COLOR.ORANGE)
+        to_screen(self.screen, str(self.state[11][0]), 670, 230, 20, COLOR.ORANGE) #No. 6
 
         # Ve cac quan va Quan - Drawing the stones
         if (self.state[5][1] == 1):
