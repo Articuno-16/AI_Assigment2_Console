@@ -4,6 +4,8 @@ import os
 from agent import Agent, Human, RandomAgent
 
 from GUI import TableGUI,SCREEN_WIDTH,SCREEN_HEIGHT,SCREEN_CAPTION,USER_GO_FIRST,RES
+PLAYER1 = 'player1'
+PLAYER2 = 'player2'
 
 
 
@@ -69,7 +71,7 @@ class Game:
 
     def update(self,turn, move):
         # Chỉnh lại khúc này
-        self.table.movingTurn('player{}'.format(turn), move[0], move[1])
+        self.table.movingTurn(turn, move[0], move[1])
 
     def run(self):
         # User go first or agent go first
@@ -77,8 +79,8 @@ class Game:
 
         # Display Menu
         level = getMenu(self.screen,self.font,self.fontbig)
-        self.players.append(self.AgentFactory('human'))
-        self.players.append(self.AgentFactory(level))
+        self.players.append(self.AgentFactory('human',PLAYER1))
+        self.players.append(self.AgentFactory(level,PLAYER2))
         
         print("*** Level : {} ***".format(level))
         running = True
@@ -98,7 +100,7 @@ class Game:
                         
             move = self.players[turn].execute(self.table.state)
             print(move)
-            self.update(turn,move)
+            self.update(self.players[turn].player_id,move)
 
             print(f"USER_{turn}'s move: {move[0]} {move[1]}")
             turn ^= 1
@@ -118,14 +120,14 @@ class Game:
         self.players.append(self.AgentFactory(level))
 
 
-    def AgentFactory(self,str):
+    def AgentFactory(self,str,playerID):
         if str == "easy":
-            return RandomAgent(1,self.screen,self.table)
+            return RandomAgent(playerID,self.screen,self.table)
         elif str == 'medium':
-            return RandomAgent(1,self.screen,self.table)
+            return RandomAgent(playerID,self.screen,self.table)
         elif str == 'hard':
-            return RandomAgent(1,self.screen,self.table)
+            return RandomAgent(playerID,self.screen,self.table)
         elif str == 'human':
-            return Human(1,self.screen,self.table)
+            return Human(playerID,self.screen,self.table)
         else :
-            return RandomAgent(1,self.screen,self.table)
+            return RandomAgent(playerID,self.screen,self.table)

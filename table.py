@@ -1,5 +1,7 @@
 from copy import deepcopy
 import tkinter as tk
+from tkinter import messagebox
+from time import sleep
 from support import *
 ### Deadline : 16h - 17h họp lại
 
@@ -264,8 +266,8 @@ class Table:
             print(result)
             while True:
                 tk.Tk().wm_withdraw()  # to hide the main window
-                # messagebox.showinfo('End Game !', 'Result: ' + result)
-                # time.sleep(2)
+                messagebox.showinfo('End Game !', 'Result: ' + result)
+                sleep(1)
                 break
             return True
         else:
