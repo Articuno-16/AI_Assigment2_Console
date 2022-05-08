@@ -36,7 +36,7 @@ class Game:
 
     def update(self,turn, move):
         # Chỉnh lại khúc này
-        self.table.movingTurn('player{}'.format(turn),move[0],move[1])
+        self.table.movingTurn('player{}'.format(turn), move[0], move[1])
 
     def run(self):
         # User go first or agent go first
