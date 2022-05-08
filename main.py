@@ -2,5 +2,5 @@ from table import Table
 
 box = Table()
 
-box.consoleTable(None)
-box.movingTurn(player='player1', index=7, direction='Right')
+box.drawTable()
+box.movingTurn(player='player1', index=2, direction='Right')
