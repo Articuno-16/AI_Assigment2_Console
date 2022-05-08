@@ -21,19 +21,21 @@ PLAYER1 = 'player1'
 PLAYER2 = 'player2'
 
 myState = [
-    [5, 0], [5, 0], [1, 0], [0, 0], [1, 0], [1, 1],
-    [0, 0], [5, 0], [0, 0], [5, 0], [0, 0], [4, 1]
+    [1, 0], [7, 0], [0, 0], [7, 0], [7, 0], [2, 1],
+    [1, 0], [1, 0], [8, 0], [7, 0], [7, 0], [1, 0]
 ]
 
 
 class Table:  
     def __init__(self):
         self.draw = '''
+	    10  9  8  7	 6
         +--------------------+
-        |{:2}|{:2}|{:2}|{:2}|{:2}|{:2}|{:2}|
+    11  |{:2}|{:2}|{:2}|{:2}|{:2}|{:2}|{:2}| 5
         |{:2}|--------------|{:2}|
         |  |{:2}|{:2}|{:2}|{:2}|{:2}|  |
         +--------------------+
+            0  1  2  3  4
         '''
 
         '''
@@ -145,14 +147,13 @@ class Table:
         cell2Next = Cell(nextnextIndex, self.state[nextnextIndex][0])
 
         if self.isChangeTurns(cell1Next, cell2Next) is True:
-            self.changeTurns()    
             return None
 
         if cell1Next.score == 0:
             return cell1Next, cell2Next
 
     # Moving function
-    def moving(self, player, index, direction):
+    def move(self, player, index, direction):
         tmp = self.state[index][0]
         if (direction == 'Right'):
             for i in range(tmp):
@@ -170,14 +171,10 @@ class Table:
     
         cell1 = Cell(nextIndex, self.state[nextIndex][0])
         cell2 = Cell(nextnextIndex, self.state[nextnextIndex][0])
-        return cell1, cell2
-
-    def changeTurns(self):
-        print('Change Turn!')
-        self.turn += 1
+        return cell1, cell2       
 
     def handleMoving(self, player, index, direction):
-        cell1, cell2 = self.moving(player, index, direction)
+        cell1, cell2 = self.move(player, index, direction)
 
         if self.isChangeTurns(cell1, cell2) is True:
             return None, True 
@@ -193,31 +190,56 @@ class Table:
         elif cell1.score != 0:
             return cell1, False
 
-    def movingTurn(self, player, index, direction):
+    def start(self):
         self.drawTable()
+        user = None
+
+        while True:
+            if user is None:
+                user = input('player: ')
+                if user == '1': user = PLAYER1
+                elif user == '2': user = PLAYER2
+            else:
+                if user is PLAYER1:
+                    user = PLAYER2
+                else: user = PLAYER1
+            index = int(input('index: '))
+
+            direction = input('direction: ')
+            if direction == 'r': direction = 'Right'
+            else: direction = 'Left'
+
+            result = self.movingTurn(user, index, direction)
+            if result is True:
+                break
+        
+    def movingTurn(self, player, index, direction):
+        # self.drawTable()
         self.handleBorrow(player)
 
         text = 'Turn {}: {} chọn ô {}, hướng {}'
         print(text.format(self.turn + 1, player, index, direction))
-        
         c1, swap = None, False
 
         while True:
-            if swap:
-                self.changeTurns()
-                break
+            if swap is True:
+                print('Change Turn!')
+                self.turn += 1
+                return self.validFinish()
 
             if c1 is None:
                 c1, swap = self.handleMoving(player, index, direction)
             else: 
                 c1, swap = self.handleMoving(player, c1.index, direction)
+
+        return False
            
     def validFinish(self):
         quanPhai = self.state[5][0] + self.state[5][1]
         quanTrai = self.state[11][0] + self.state[11][1]
         if (quanPhai == 0 and quanTrai == 0):
             self.playerScore = [self.player1Score, self.player2Score]
-            self.finished()
+        return self.finished()
 
     def drawTable(self, arr = None):
         if arr is None:
@@ -225,7 +247,7 @@ class Table:
         print(self.draw.format(*arr))
         text = """        Player1's score: {}   Player2's score: {}\n"""
         print(text.format(self.player1Score, self.player2Score))
-        self.validFinish() 
+        # self.validFinish() 
 
     '''Checking whether if Game is finished'''
     def finished(self):
