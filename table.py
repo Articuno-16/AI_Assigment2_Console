@@ -49,11 +49,11 @@ class Table:
         self.player1Score = 0
         self.player2Score = 0
         self.playerScore = [0, 0]
-        self.state = myState
-        """ self.state = [
+        # self.state = myState
+        self.state = [
             [5, 0], [5, 0], [5, 0], [5, 0], [5, 0], [0, 1],
             [5, 0], [5, 0], [5, 0], [5, 0], [5, 0], [0, 1]
-        ] """
+        ]
         
     def initDrawTable(self):
         arr = []
