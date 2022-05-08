@@ -82,9 +82,9 @@ class TableGUI(Table):
         self.screen.fill((255, 255, 255))
         self.screen.blit(background, (0, 0))
         to_screen(self.screen, "Player 1", 200, 60, 25, COLOR.DARKRED)
-        to_screen(self.screen, str(self.playerScore[1]), 370, 40, 50, COLOR.DARKRED)
+        to_screen(self.screen, str(self.player2Score), 370, 40, 50, COLOR.DARKRED)
         to_screen(self.screen, "Player 0", 470, 380, 25, COLOR.PURPLE)
-        to_screen(self.screen, str(self.playerScore[0]), 370, 365, 50, COLOR.PURPLE)
+        to_screen(self.screen, str(self.player1Score), 370, 365, 50, COLOR.PURPLE)
         if turn == 0:
             to_screen(self.screen, "Player " + str(turn) + " is thinking...", 300, 450, 20 , COLOR.PURPLE)
         else:
@@ -99,45 +99,46 @@ class TableGUI(Table):
         to_screen(self.screen, str(self.state[2][0]), 370, 250, 20, COLOR.ORANGE) #No. 3
         to_screen(self.screen, str(self.state[3][0]), 470, 250, 20, COLOR.ORANGE) #No. 4
         to_screen(self.screen, str(self.state[4][0]), 570, 250, 20, COLOR.ORANGE) #No. 5
-        to_screen(self.screen, str(self.state[6][0]), 170, 150, 20, COLOR.ORANGE) #No. 11
-        to_screen(self.screen, str(self.state[7][0]), 270, 150, 20, COLOR.ORANGE) #No. 10
+
+        to_screen(self.screen, str(self.state[10][0]), 170, 150, 20, COLOR.ORANGE) #No. 11
+        to_screen(self.screen, str(self.state[9][0]), 270, 150, 20, COLOR.ORANGE) #No. 10
         to_screen(self.screen, str(self.state[8][0]), 370, 150, 20, COLOR.ORANGE) #No. 9
-        to_screen(self.screen, str(self.state[9][0]), 470, 150, 20, COLOR.ORANGE) #No. 8
-        to_screen(self.screen, str(self.state[10][0]), 570, 150, 20, COLOR.ORANGE) #No. 7
+        to_screen(self.screen, str(self.state[7][0]), 470, 150, 20, COLOR.ORANGE) #No. 8
+        to_screen(self.screen, str(self.state[6][0]), 570, 150, 20, COLOR.ORANGE) #No. 7
         
 
-        to_screen(self.screen, str(abs(self.state[5][1] - 2)), 120, 170, 30, COLOR.ORANGE)
-        to_screen(self.screen, str(self.state[5][0]), 120, 230, 20, COLOR.ORANGE) #No. 0
+        to_screen(self.screen, str(self.state[11][1]), 120, 170, 30, COLOR.ORANGE)
+        to_screen(self.screen, str(self.state[11][0]), 120, 230, 20, COLOR.ORANGE) #No. 0
 
-        to_screen(self.screen, str(abs(self.state[11][1] - 2)), 670, 170, 30, COLOR.ORANGE)
-        to_screen(self.screen, str(self.state[11][0]), 670, 230, 20, COLOR.ORANGE) #No. 6
+        to_screen(self.screen, str(self.state[5][1]), 670, 170, 30, COLOR.ORANGE)
+        to_screen(self.screen, str(self.state[5][0]), 670, 230, 20, COLOR.ORANGE) #No. 6
 
         # Ve cac quan va Quan - Drawing the stones
-        if (self.state[5][1] == 1):
+        if (self.state[11][1] == 1):
             self.screen.blit(QUAN, (80, 200))
 
-        if (self.state[11][1] == 1):
+        if (self.state[5][1] == 1):
             self.screen.blit(QUAN, (685, 200))
 
         # Dat soi quan tren o ben trai
-        if (self.state[5][0] >= 1): self.screen.blit(DAN, (130, 260))
-        if (self.state[5][0] >= 2): self.screen.blit(DAN, (130, 275))
-        if (self.state[5][0] >= 3): self.screen.blit(DAN, (115, 260))
-        if (self.state[5][0] >= 4): self.screen.blit(DAN, (115, 275))
-        if (self.state[5][0] >= 5): self.screen.blit(DAN, (100, 260))
-        if (self.state[5][0] >= 6): self.screen.blit(DAN, (100, 275))
-        if (self.state[5][0] >= 7): self.screen.blit(DAN, (85, 260))
-        if (self.state[5][0] >= 8): self.screen.blit(DAN, (85, 275))
+        if (self.state[11][0] >= 1): self.screen.blit(DAN, (130, 260))
+        if (self.state[11][0] >= 2): self.screen.blit(DAN, (130, 275))
+        if (self.state[11][0] >= 3): self.screen.blit(DAN, (115, 260))
+        if (self.state[11][0] >= 4): self.screen.blit(DAN, (115, 275))
+        if (self.state[11][0] >= 5): self.screen.blit(DAN, (100, 260))
+        if (self.state[11][0] >= 6): self.screen.blit(DAN, (100, 275))
+        if (self.state[11][0] >= 7): self.screen.blit(DAN, (85, 260))
+        if (self.state[11][0] >= 8): self.screen.blit(DAN, (85, 275))
 
-        # Dat soi quan tren o ben phai
-        if (self.state[11][0] >= 1): self.screen.blit(DAN, (660, 260))
-        if (self.state[11][0] >= 2): self.screen.blit(DAN, (660, 275))
-        if (self.state[11][0] >= 3): self.screen.blit(DAN, (675, 260))
-        if (self.state[11][0] >= 4): self.screen.blit(DAN, (675, 275))
-        if (self.state[11][0] >= 5): self.screen.blit(DAN, (690, 260))
-        if (self.state[11][0] >= 6): self.screen.blit(DAN, (690, 275))
-        if (self.state[11][0] >= 7): self.screen.blit(DAN, (705, 260))
-        if (self.state[11][0] >= 8): self.screen.blit(DAN, (705, 275))
+        # Dat soi quan tren o ben trai
+        if (self.state[5][0] >= 1): self.screen.blit(DAN, (660, 260))
+        if (self.state[5][0] >= 2): self.screen.blit(DAN, (660, 275))
+        if (self.state[5][0] >= 3): self.screen.blit(DAN, (675, 260))
+        if (self.state[5][0] >= 4): self.screen.blit(DAN, (675, 275))
+        if (self.state[5][0] >= 5): self.screen.blit(DAN, (690, 260))
+        if (self.state[5][0] >= 6): self.screen.blit(DAN, (690, 275))
+        if (self.state[5][0] >= 7): self.screen.blit(DAN, (705, 260))
+        if (self.state[5][0] >= 8): self.screen.blit(DAN, (705, 275))
 
         # Dat soi cho USER_0
         for i in range(0,5):
