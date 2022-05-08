@@ -43,10 +43,9 @@ class Human(Agent):
         isClicked = False
 
         available_boxes = []
-        for i in range(6,11):
+        for i in range(0,5):
             if state_game[i][0] > 0:
                 available_boxes.append(i)
-
         while True:
             isClicked = False
 
@@ -64,7 +63,7 @@ class Human(Agent):
 
             if 240 < y < 340:
                 if 160 < x < 260:
-                    move[0] = 6
+                    move[0] = 0
                     if move[0] not in available_boxes:
                         continue
 
@@ -78,7 +77,7 @@ class Human(Agent):
                         move[1] = 'Left' if x < 210 else 'Right'
 
                 elif 260 < x < 360:
-                    move[0] = 7
+                    move[0] = 1
                     if move[0] not in available_boxes:
                         continue
 
@@ -91,7 +90,7 @@ class Human(Agent):
                     if isClicked:
                         move[1] = 'Left' if x < 310 else 'Right'
                 elif 360 < x < 460:
-                    move[0] = 8
+                    move[0] = 2
                     if move[0] not in available_boxes:
                         continue
 
@@ -104,7 +103,7 @@ class Human(Agent):
                     if isClicked:
                         move[1] = 'Left' if x < 410 else 'Right'
                 elif 460 < x < 560:
-                    move[0] = 9
+                    move[0] = 3
                     if move[0] not in available_boxes:
                         continue
 
@@ -117,7 +116,7 @@ class Human(Agent):
                     if isClicked:
                         move[1] = 'Left' if x < 510 else 'Right'
                 elif 560 < x < 660:
-                    move[0] = 10
+                    move[0] = 4
                     if move[0] not in available_boxes:
                         continue
 

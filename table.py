@@ -229,8 +229,7 @@ class Table:
                 tk.Tk().wm_withdraw()  # to hide the main window
                 messagebox.showinfo('End Game !', 'Result: ' + result)
                 sleep(2)
-                break
-            return True
+                return True
         else:
             return False
     
