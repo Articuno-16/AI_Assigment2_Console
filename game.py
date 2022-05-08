@@ -49,7 +49,7 @@ def getMenu(screen,font,fontbig):
             pygame.display.flip()
 
 class Game:
-    def __init__(self, algo_0=None, algo_1=None):
+    def __init__(self):
         os.environ['SDL_VIDEO_CENTERED'] = '1'
         pygame.init()
         self.font = pygame.font.Font('freesansbold.ttf', 25)
