@@ -2,6 +2,17 @@ from copy import deepcopy
 import tkinter as tk
 from tkinter import messagebox
 from time import sleep
+
+def calculateIndex(index):
+    if 0 <= index < 12:
+        return index
+    if index < 0:
+        absIndex = abs(index)
+        if absIndex < 12: return 12 - absIndex
+        return 12 * (1 + int(absIndex/12)) % absIndex
+    if index > 11:
+        return index % 12
+
 class Cell:
     def __init__(self, index, score):
         self.index = index
@@ -42,105 +53,109 @@ class Table:
             +--------------------+
                 0  1  2  3  4
         '''
-
+        self.turn = 0
+        self.player1Score = 0
+        self.player2Score = 0
         self.playerScore = [0, 0]
         self.state = [
             [5, 0], [5, 0], [5, 0], [5, 0], [5, 0], [0, 1],
             [5, 0], [5, 0], [5, 0], [5, 0], [5, 0], [0, 1]
         ]
-        self.i = 0
+        
 
-    def initTable(self, table):
+    def initDrawTable(self):
         arr = []
         for i in range(11,5,-1):
-            arr.append(table[i][0])
-        arr.append(table[5][0])
-        arr.append(table[11][1])
-        arr.append(table[5][1])
+            arr.append(self.state[i][0])
+        arr.append(self.state[5][0])
+        arr.append(self.state[11][1])
+        arr.append(self.state[5][1])
         for i in range(0,5):
-            arr.append(table[i][0])
+            arr.append(self.state[i][0])
             
         return arr
 
-    def fakeTable(self):
-        arr = []
-        for ele in self.state:
-            arr.append(ele[0])
-        return arr
+    # def handleNextIndex(self, index):
+    #     if index < 0:
+    #         absIndex = abs(index)
+    #         if absIndex < 12: return 12 - absIndex
+    #         return 12 * (1 + int(absIndex/12)) % absIndex
+    #     if index > 11:
+    #         return index % 12
 
-    def handleNextIndex(self, index):
-        if index < 0:
-            absIndex = abs(index)
-            if absIndex < 12: return 12 - absIndex
-            return 12 * (1 + int(absIndex/12)) % absIndex
-        if index > 11:
-            return index % 12
 
     def isChangeTurns(self, cell1, cell2):
         if cell1.isQuanCell and cell1.score != 0:
             return True
         if cell1.score == 0 and cell2.score == 0:
-            return True
+            if cell2.isQuanCell is False:
+                return True
+            else:
+                cell2.score += 5 if self.state[cell2.index][1] == 1 else 0
+                return True if cell2.score == 0 else False
         return False 
 
-    def isEatPoints(self, cell1, cell2):
-        return True if cell1.score == 0 and cell2.score != 0 else False
+    def addScore(self, player, cell2):       
+        score = self.state[cell2.index][0]
+        
+        # Nếu ô ăn được là ô quan thì cộng thêm điểm
+        if cell2.isQuanCell:
+            score += self.state[cell2.index][1] * 5
+            self.state[cell2.index][1] = 0
+        # Gán điểm cho player
+        if player == 'player1': 
+            self.player1Score += score
+        else: 
+            self.player2Score += score
+        
+        self.state[cell2.index][0] = 0
+        cell2.score = 0
+        self.drawTable()
 
 
     # return None, None nếu dừng, return 2 cell tiếp theo nếu ăn tiếp
-    def eatCells(self, cell1, cell2, direction):
+    def eatCells(self, player, cell1, cell2, direction):
         print('Ăn điểm!')
-        self.playerScore[0] += cell2.score
-        self.state[cell2.index][0] = 0
-        print (self.state[cell2.index][0])
-        self.consoleTable(None)
+        
+        self.addScore(player, cell2)
+
         if direction == 'Right':
-            nextIndex = cell2.index + 1
-            nextnextIndex = nextIndex + 1  
+            nextIndex = calculateIndex(cell2.index + 1)
+            nextnextIndex = calculateIndex(nextIndex + 1) 
         else:
-            nextIndex = cell2.index - 1
-            nextnextIndex = nextIndex - 1
+            nextIndex = calculateIndex(cell2.index - 1)
+            nextnextIndex = calculateIndex(nextIndex - 1)
 
-        if nextIndex > 11 or nextIndex < 0:
-            nextIndex = self.handleNextIndex(nextIndex)
-        if nextnextIndex > 11 or nextnextIndex < 0:
-            nextnextIndex = self.handleNextIndex(nextnextIndex)
+        cell1Next = Cell(nextIndex, self.state[nextIndex][0])
+        cell2Next = Cell(nextnextIndex, self.state[nextnextIndex][0])
 
-        if (0 < nextIndex < 12 and 0 < nextnextIndex < 12):
-            cell1Next = Cell(nextIndex, self.state[nextIndex][0])
-            cell2Next = Cell(nextnextIndex, self.state[nextnextIndex][0])
-            if (self.isEatPoints(cell1Next, cell2Next)):
-                return cell1Next, cell2Next
-        return None, None
+        if self.isChangeTurns(cell1Next, cell2Next) is True:
+            print('Change Turn!')
+            self.turn += 1    
+            return None
+
+        if cell1Next.score == 0:
+            return cell1Next, cell2Next
 
     # Moving function
     def moving(self, player, index, direction):
         text = 'Turn {}: {} chọn ô {}, hướng {}'
-        print(text.format(self.i + 1,player, index, direction))
-        self.i+=1
-        array = self.fakeTable()
-        currScore = array[index]
-        array[index] = 0
-        if (direction=='Right'):
-            for i in range(currScore):
-                array[index+i+1]+=1
-            nextIndex = index+currScore+1
-            nextnextIndex = nextIndex+1
-        elif direction == 'Left':
-            for i in range(currScore):
-                array[index-i-1]+=1
-            nextIndex = index-currScore-1
-            nextnextIndex = nextIndex-1
+        print(text.format(self.turn + 1, player, index, direction))
+        tmp = self.state[index][0]
+        if (direction == 'Right'):
+            for i in range(tmp):
+                self.state[calculateIndex(index + i + 1)][0] +=1
+            nextIndex = calculateIndex(index + tmp +1) 
+            nextnextIndex = calculateIndex(nextIndex + 1)
+        else:
+            for i in range(tmp):
+                self.state[calculateIndex(index - i - 1)][0] +=1
+            nextIndex = calculateIndex(index - tmp - 1) 
+            nextnextIndex = calculateIndex(nextIndex - 1)
 
-        self.saveState(array)
-        arr = self.initTable(self.state)
-        print(self.draw.format(*arr))
-        
-        if nextIndex > 11 or nextIndex < 0:
-            nextIndex = self.handleNextIndex(nextIndex)
-        if nextnextIndex > 11 or nextnextIndex < 0:
-            nextnextIndex = self.handleNextIndex(nextnextIndex)
-
+        self.state[index][0] = 0
+        self.drawTable()
+    
         nextCell = Cell(nextIndex, self.state[nextIndex][0])
         nextnextCell = Cell(nextnextIndex, self.state[nextnextIndex][0])
         return nextCell, nextnextCell
@@ -155,36 +170,50 @@ class Table:
         
         while c1 is not None and c2 is not None:
             c1, c2 = self.handleMoving(player, c1.index, direction)
-            # if c1 is not None and c2 is not None: print(c1.index, c2.index)
 
 
     def handleMoving(self, player, index, direction):
         cell1, cell2 = self.moving(player, index, direction)
 
         if self.isChangeTurns(cell1, cell2) is True:
-            print('Change Turn!')    
+            print('Change Turn!')
+            self.turn += 1    
             return None, None  
 
         # ăn điểm
-        if self.isEatPoints(cell1, cell2):
-            keepEating = self.eatCells(cell1, cell2, direction)
-            if keepEating is None: 
-                print(keepEating[0].index, keepEating[1].index)
-                return keepEating[0], keepEating[1]
-            return None, None
+        if cell1.score == 0:
+            keepEating = self.eatCells(player, cell1, cell2, direction)
+
+            i = 0
+            while keepEating is not None:
+                i+=1
+                keepEating = self.eatCells(player, keepEating[0], keepEating[1], direction)
+                if i == 10: break
+            return None, None  
         
         # đi tiếp
         elif cell1.score != 0:
             return cell1, cell2
                 
+    def validFinish(self):
+        quanPhai = self.state[5][0] + self.state[5][1]
+        quanTrai = self.state[11][0] + self.state[11][1]
+        if (quanPhai == 0 and quanTrai == 0):
+            self.playerScore = [self.player1Score, self.player2Score]
+            self.finished()
 
-    def consoleTable(self, arr):
+
+    def drawTable(self, arr = None):
         if arr is None:
-            arr = self.initTable(self.state)
-        print(self.draw.format(*arr)) 
+            arr = self.initDrawTable()
+        print(self.draw.format(*arr))
+        text = """        Player1's score: {}\n        Player2's score: {}\n"""
+        print(text.format(self.player1Score, self.player2Score))
+        self.validFinish() 
 
+
+    '''Checking whether if Game is finished'''
     def finished(self):
-        '''Checking whether if Game is finished'''
         if finished(self.state):
             # If point of player 0 > player 1 than you won
             if self.playerScore[0] > self.playerScore[1]:
@@ -192,10 +221,10 @@ class Table:
             # If point of player 0 < player 1 than computer won
             elif self.playerScore[0] < self.playerScore[1]:
                 result = 'Computer won'
-            # If equal than draw
-            else: 
-                result = 'Draw'
+            # Or draw
+            else: result = 'Draw'
             # Show the message box to inform the result
+            print(result)
             while True:
                 tk.Tk().wm_withdraw()  # to hide the main window
                 messagebox.showinfo('End Game !', 'Result: ' + result)
