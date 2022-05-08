@@ -1,5 +1,7 @@
 PLAYER1 = 'player1'
 PLAYER2 = 'player2'
+LEFT = 'Left'
+RIGHT = 'Right'
 
 def calculateIndex(index):
     if 0 <= index < 12:
@@ -21,11 +23,8 @@ def getInput(player=None):
         user = getUser(player)
         index = int(input('Index: '))
         direction = input('Direction: ')
+        direction = RIGHT if direction == 'r' or direction == 'R' else LEFT
         if validInput(user, index): break
-        if direction == 'r' or direction == 'R': 
-            direction = 'Right'
-        else: 
-            direction = "Left"
     return user, index, direction
 
 def validInput(user, index):

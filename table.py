@@ -190,11 +190,19 @@ class Table:
         elif cell1.score != 0:
             return cell1, False
 
+    def validIndex(self, index):
+        while True:
+            if self.state[index][0] != 0:
+                return index
+            print('You can not choose this cell!')
+            index = int(input('Index: ')) 
+
     def start(self):
         self.drawTable()
         user = None
         while True:
             user, index, direction = getInput(user)
+            index = self.validIndex(index)
             result = self.movingTurn(user, index, direction)
             if result is True:
                 break
