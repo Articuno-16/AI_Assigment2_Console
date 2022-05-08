@@ -1,5 +1,7 @@
 from copy import deepcopy
 import tkinter as tk
+from tkinter import messagebox
+from time import sleep
 
 def calculateIndex(index):
     if 0 <= index < 12:
@@ -213,10 +215,10 @@ class Table:
     '''Checking whether if Game is finished'''
     def finished(self):
         if finished(self.state):
-            # You won
+            # If point of player 0 > player 1 than you won
             if self.playerScore[0] > self.playerScore[1]:
                 result = 'You won'
-            # Computer won
+            # If point of player 0 < player 1 than computer won
             elif self.playerScore[0] < self.playerScore[1]:
                 result = 'Computer won'
             # Or draw
@@ -225,8 +227,8 @@ class Table:
             print(result)
             while True:
                 tk.Tk().wm_withdraw()  # to hide the main window
-                # messagebox.showinfo('End Game !', 'Result: ' + result)
-                # time.sleep(2)
+                messagebox.showinfo('End Game !', 'Result: ' + result)
+                sleep(2)
                 break
             return True
         else:

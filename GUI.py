@@ -167,3 +167,4 @@ class TableGUI(Table):
     
     def redraw(self, turn):
         self.__draw_table(turn)
+
