@@ -19,8 +19,6 @@ from support import *
 # Hiện thực lại cái frame để chạy
 # Hiện lên cửa sổ chọn mức độ trò chơi
 
-PLAYER1 = 'player1'
-PLAYER2 = 'player2'
 
 myState = [
     [1, 0], [7, 0], [0, 0], [7, 0], [7, 0], [2, 1],
@@ -195,22 +193,8 @@ class Table:
     def start(self):
         self.drawTable()
         user = None
-
         while True:
-            if user is None:
-                user = input('player: ')
-                if user == '1': user = PLAYER1
-                elif user == '2': user = PLAYER2
-            else:
-                if user is PLAYER1:
-                    user = PLAYER2
-                else: user = PLAYER1
-            index = int(input('index: '))
-
-            direction = input('direction: ')
-            if direction == 'r': direction = 'Right'
-            else: direction = 'Left'
-
+            user, index, direction = getInput(user)
             result = self.movingTurn(user, index, direction)
             if result is True:
                 break
