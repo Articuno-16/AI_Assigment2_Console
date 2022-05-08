@@ -20,16 +20,24 @@ class RandomAgent(Agent):
         super().__init__(player_id, screen, table)
     def execute(self,state_game):
         pos = 0
-        if self.player_id:
-            while True:
-                pos = randint(7, 11)
-                if state_game[pos][0] != 0:
-                    break
+        available_boxes = []
+        if self.player_id == "player2":
+            for i in range(6,10):
+                if state_game[i][0] > 0:
+                    available_boxes.append(i)
+            if(len(available_boxes) == 0):
+                self.table.borrow("player2")
+                available_boxes = range(6,11)
+            pos = choice(available_boxes)
+             
         else:
-            while True:
-                pos = randint(1, 5)
-                if state_game[pos][0] != 0:
-                    break
+            for i in range(0,5):
+                if state_game[i][0] > 0:
+                    available_boxes.append(i)
+            if(len(available_boxes) == 0):
+                self.table.borrow("player2")
+                available_boxes = range(0,5)
+            pos = choice(available_boxes)
         return pos, choice(['Left', 'Right'])
 class Human(Agent):
     def __init__(self, player_id, screen, table):
@@ -46,6 +54,10 @@ class Human(Agent):
         for i in range(0,5):
             if state_game[i][0] > 0:
                 available_boxes.append(i)
+
+        if(len(available_boxes) == 0):
+            self.table.borrow(self.player_id)
+
         while True:
             isClicked = False
 

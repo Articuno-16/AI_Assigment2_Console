@@ -79,7 +79,7 @@ class Game:
 
         # Display Menu
         level = getMenu(self.screen,self.font,self.fontbig)
-        self.players.append(self.AgentFactory('human',PLAYER1))
+        self.players.append(self.AgentFactory(level,PLAYER1))
         self.players.append(self.AgentFactory(level,PLAYER2))
         
         print("*** Level : {} ***".format(level))
