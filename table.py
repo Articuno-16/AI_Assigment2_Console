@@ -207,4 +207,4 @@ class Table:
     
 
 def finished(_state):
-    return  _state[0] == [0, 0] and _state[6] == [0, 0]
+    return  _state[5] == [0, 0] and _state[11] == [0, 0]
