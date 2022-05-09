@@ -1,5 +1,7 @@
 from copy import deepcopy
 import tkinter as tk
+from tkinter import messagebox
+from time import sleep
 from support import *
 ### Deadline : 16h - 17h họp lại
 
@@ -17,8 +19,6 @@ from support import *
 # Hiện thực lại cái frame để chạy
 # Hiện lên cửa sổ chọn mức độ trò chơi
 
-PLAYER1 = 'player1'
-PLAYER2 = 'player2'
 
 myState = [
     [1, 0], [7, 0], [0, 0], [7, 0], [7, 0], [2, 1],
@@ -190,25 +190,19 @@ class Table:
         elif cell1.score != 0:
             return cell1, False
 
+    def validIndex(self, index):
+        while True:
+            if self.state[index][0] != 0:
+                return index
+            print('You can not choose this cell!')
+            index = int(input('Index: ')) 
+
     def start(self):
         self.drawTable()
         user = None
-
         while True:
-            if user is None:
-                user = input('player: ')
-                if user == '1': user = PLAYER1
-                elif user == '2': user = PLAYER2
-            else:
-                if user is PLAYER1:
-                    user = PLAYER2
-                else: user = PLAYER1
-            index = int(input('index: '))
-
-            direction = input('direction: ')
-            if direction == 'r': direction = 'Right'
-            else: direction = 'Left'
-
+            user, index, direction = getInput(user)
+            index = self.validIndex(index)
             result = self.movingTurn(user, index, direction)
             if result is True:
                 break
@@ -264,8 +258,8 @@ class Table:
             print(result)
             while True:
                 tk.Tk().wm_withdraw()  # to hide the main window
-                # messagebox.showinfo('End Game !', 'Result: ' + result)
-                # time.sleep(2)
+                messagebox.showinfo('End Game !', 'Result: ' + result)
+                sleep(1)
                 break
             return True
         else:

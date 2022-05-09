@@ -1,9 +1,11 @@
 from time import sleep
 import pygame,sys
 import os
-from agent import Agent, Human, RandomAgent
+from agent import Agent, Human, Minimax, RandomAgent
 
 from GUI import TableGUI,SCREEN_WIDTH,SCREEN_HEIGHT,SCREEN_CAPTION,USER_GO_FIRST,RES
+PLAYER1 = 'player1'
+PLAYER2 = 'player2'
 
 
 
@@ -20,9 +22,9 @@ def text_to_screen(screen, text, x, y, fontsize, color):
 def getMenu(screen,font,fontbig):
     background = pygame.image.load(os.path.join(RES, 'background.png')) 
     screen.blit(background, (0, 0))
-    pygame.display.set_caption("Madarin Capture Square")
+    pygame.display.set_caption("Mandarin Capture Square")
     color=(255,255,255)
-    label = fontbig.render(' MADARIN CAPTURE SQUARE ', True, (255,255,23))
+    label = fontbig.render(' MANDARIN CAPTURE SQUARE ', True, (255,255,23))
     noti = font.render(' Press To Play: ', True, color)
     text1 = font.render(' A - Easy', True, color)
     text2 = font.render(' B - Medium', True, color)
@@ -69,16 +71,16 @@ class Game:
 
     def update(self,turn, move):
         # Chỉnh lại khúc này
-        self.table.movingTurn('player{}'.format(turn), move[0], move[1])
+        self.table.movingTurn(turn, move[0], move[1])
 
     def run(self):
         # User go first or agent go first
         turn = 0 if USER_GO_FIRST else 1
 
         # Display Menu
-        level = getMenu(self.screen,self.font,self.fontbig)
-        self.players.append(self.AgentFactory('human'))
-        self.players.append(self.AgentFactory(level))
+        level = getMenu(self.screen,self.font,self.fontbig).lower()
+        self.players.append(self.AgentFactory("random",PLAYER1))
+        self.players.append(self.AgentFactory(level,PLAYER2))
         
         print("*** Level : {} ***".format(level))
         running = True
@@ -98,7 +100,7 @@ class Game:
                         
             move = self.players[turn].execute(self.table.state)
             print(move)
-            self.update(turn,move)
+            self.update(self.players[turn].player_id,move)
 
             print(f"USER_{turn}'s move: {move[0]} {move[1]}")
             turn ^= 1
@@ -108,24 +110,27 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:
+                        self.reset()
 
     def reset(self): 
         self.table = TableGUI(self.screen)
         self.players.clear()
         self.move = None
         level = getMenu(self.screen,self.font,self.fontbig)
-        self.players.append(self.AgentFactory('human'))
-        self.players.append(self.AgentFactory(level))
+        self.players.append(self.AgentFactory('random',PLAYER1))
+        self.players.append(self.AgentFactory(level,PLAYER2))
+        self.run()
 
-
-    def AgentFactory(self,str):
+    def AgentFactory(self,str,playerID):
         if str == "easy":
-            return RandomAgent(1,self.screen,self.table)
+            return RandomAgent(playerID,self.screen,self.table)
         elif str == 'medium':
-            return RandomAgent(1,self.screen,self.table)
+            return Minimax(playerID,self.screen,self.table,depth=6)
         elif str == 'hard':
-            return RandomAgent(1,self.screen,self.table)
+            return Minimax(playerID,self.screen,self.table,depth=9)
         elif str == 'human':
-            return Human(1,self.screen,self.table)
+            return Human(playerID,self.screen,self.table)
         else :
-            return RandomAgent(1,self.screen,self.table)
+            return RandomAgent(playerID,self.screen,self.table)

@@ -1,5 +1,5 @@
 import pygame
-from table import finished
+from table import *
 import os
 from GUI import RES,QUANVALUE
 from random import randint,choice,shuffle
@@ -7,7 +7,7 @@ import sys
 from copy import deepcopy
 Lbutton = pygame.image.load(os.path.join(RES, 'left.png'))
 Rbutton = pygame.image.load(os.path.join(RES, 'right.png'))
-
+NUM_SQUARE = 12
 class Agent:
     def __init__(self, player_id, screen=None, table=None):
         self.INF = 70
@@ -20,17 +20,203 @@ class RandomAgent(Agent):
         super().__init__(player_id, screen, table)
     def execute(self,state_game):
         pos = 0
-        if self.player_id:
-            while True:
-                pos = randint(7, 11)
-                if state_game[pos][0] != 0:
-                    break
+        available_boxes = []
+        if self.player_id == "player2":
+            for i in range(6,10):
+                if state_game[i][0] > 0:
+                    available_boxes.append(i)
+            if(len(available_boxes) == 0):
+                self.table.borrow("player2")
+                available_boxes = range(6,11)
+            pos = choice(available_boxes)
+             
         else:
-            while True:
-                pos = randint(1, 5)
-                if state_game[pos][0] != 0:
-                    break
+            for i in range(0,5):
+                if state_game[i][0] > 0:
+                    available_boxes.append(i)
+            if(len(available_boxes) == 0):
+                self.table.borrow("player1")
+                available_boxes = range(0,5)
+            pos = choice(available_boxes)
+        print(pos, choice(['Left', 'Right']))
         return pos, choice(['Left', 'Right'])
+     
+class Minimax(Agent):
+    def __init__(self, player_id, screen, table, depth):
+        super().__init__(player_id, screen, table)
+        self.pid = 0 if player_id == "player1" else 1
+        self.depth = depth
+        
+    # Check if two kings are not eaten: 
+    # Input: state
+    # Output: bool value decides gameover
+    def finished(self,_state):
+        return _state[NUM_SQUARE-1] == [0, 0] and _state[NUM_SQUARE//2-1] == [0, 0]
+    
+    # Check Nợ quân: (new_state, new_point)
+    def handleBorrowStack(self,_state_game,_player_score):
+        state, player_score = deepcopy(_state_game), deepcopy(_player_score)
+
+        if not any([i[0] for i in state[0:NUM_SQUARE//2-1]]):
+            player_score[0] -= 5
+
+            for i in range(1,NUM_SQUARE//2):
+                state[i][0] = 1
+        
+        if not any([i[0] for i in state[NUM_SQUARE//2:NUM_SQUARE-1]]):
+            player_score[1] -= 5
+
+            for i in range(7,NUM_SQUARE):
+                state[i][0] = 1
+        return state, player_score
+    
+    # Get Final Result and Winner: (Bool,point)
+    def getResult(self, state_, cur_point_): # (Finished?, Who won?)
+        state, player_point = deepcopy(state_), deepcopy(cur_point_)
+        if finished(state):
+            # get all remaining prawns in the 
+            player_point[0] += sum([i[0] for i in state[0:NUM_SQUARE//2-1]])
+            player_point[1] += sum([i[0] for i in state[NUM_SQUARE//2:NUM_SQUARE-1]])
+
+            if player_point[0] > player_point[1]: # Player 0 wins
+                return (True, -self.INF if self.player_id else self.INF)
+            elif player_point[0] < player_point[1]: # Player 1 wins
+                return (True ,self.INF if self.player_id else -self.INF)
+            else: # It's a Tie
+                return(True,0)
+        # Game has not finished yet
+        return (False, player_point[1] if self.player_id else player_point[0])
+
+    # Get moves that are Available: [(index,'l'),(index,'r')],[],[],..
+    def getPossibleMoves(self, state, player_id): #list of actions: [(index,'l'),(index,'r')]
+        list_of_action = []
+        if not player_id:
+            for i in range(0, NUM_SQUARE//2-1):
+                if state[i][0]: # prawns in that square
+                    list_of_action.extend([(i,'Left'), (i,'Right')])
+        else:
+            for i in range(NUM_SQUARE//2, NUM_SQUARE-1):
+                if state[i][0]:
+                    list_of_action.extend([(i,'Left'), (i,'Right')])
+
+        shuffle(list_of_action)
+        return list_of_action
+    
+    # Evaluate after each turn: Int
+    # Input: score: [Int,Int], winner: [Bool,Bool]
+    # Output: Evaluated Score
+    def evaluate(self, score, winner):
+        if winner[0]:
+            return winner[1] + score[1] - score[0] if self.player_id else winner[1] + score[0] - score[1]
+        return score[1] - score[0] if self.player_id else score[0] - score[1]
+
+    # Generate next possible move foreach player
+    # Input: state, move, cur_point_, player_id
+    # Output: (new_state, new_point)
+    def performNextMove(self , state__, move , cur_point_ , id): # Khởi tạo bước đi trong bàn cờ
+        state , cur_point = deepcopy(state__), deepcopy(cur_point_)
+        # direction: 1 for RIGHT and 2 for LEFT
+        direction = 1 if move[1] == 'Right' else 2
+        cur_pos = move[0]
+        next_pos = (cur_pos + direction) % NUM_SQUARE
+
+        # Each of next positions get +1 prawn
+        for _ in range(state[cur_pos][0]):
+            state[next_pos][0] += 1
+            next_pos = (next_pos + direction) % NUM_SQUARE
+        state[cur_pos][0] //= NUM_SQUARE
+
+        while True:
+            # if next_pos is a King's spot or (next_pos and next of next_pos are empty)
+            # -> No more consecutive pick-up and point not increased
+            if next_pos == NUM_SQUARE//2-1 or next_pos == NUM_SQUARE-1 or (state[next_pos][0] == 0 and state[(next_pos + direction) % NUM_SQUARE][0] == 0 and
+                                    state[(next_pos + direction) % NUM_SQUARE][1] != 1):
+                                    return state , cur_point
+                                
+            # else if next_pos is empty and (next of next_pos is not empty)
+            # -> point increased
+            elif state[next_pos][0] == 0 and (
+                state[(next_pos + direction) % NUM_SQUARE][0] or state[(next_pos + direction) % NUM_SQUARE][1] == 1
+            ):
+                # reset the current point and state for (next of next_pos)
+                cur_point[id] += state[(next_pos + direction) % NUM_SQUARE][0]
+                state[(next_pos + direction) % NUM_SQUARE][0] = 0
+                # check if we ate the King
+                if state[(next_pos + direction) % NUM_SQUARE][1] == 1:
+                    cur_point[id] += self.quanvalue
+                    state[(next_pos + direction) % NUM_SQUARE][1] = 0
+                # double tap
+                if state[(next_pos + direction*2) % NUM_SQUARE][0] == 0 and state[(next_pos + direction * 2) % NUM_SQUARE][1] != 1:
+                    next_pos = (next_pos + direction * 2) % NUM_SQUARE
+                    
+            # else: next pos is not empty and not a King's spot
+            # -> continue running
+            else:
+                cur_pos = next_pos
+                for _ in range(state[cur_pos][0]):
+                    state[next_pos][0] += 1 
+                    next_pos = (next_pos + direction) % NUM_SQUARE
+                state[cur_pos][0] //= NUM_SQUARE
+                
+    def execute(self, state_game): # Alpha_Beta Algorithms
+        cur_point = self.table.playerScore
+        inf = float('inf')
+        def alpha_beta(cur_depth, index, curstate, cur_point, alpha, beta):
+            #print(curstate)
+            index = index%2
+            cur_depth += 1
+            # return if max depth or gameover
+            is_end = self.getResult(curstate, cur_point)
+            if is_end[0] or cur_depth == self.depth:
+                return None, self.evaluate(cur_point, is_end)
+            # init
+            best_score, best_action = None, None
+            curstate , cur_point = self.handleBorrowStack(curstate, cur_point)
+            ## minimax and AB pruning by each turn
+            # Player: Maximize
+            if index==0:
+                best_score = -inf
+                for move in self.getPossibleMoves(curstate, self.pid):
+                    next_state, next_point = self.performNextMove(curstate, move , cur_point ,self.pid)
+                    _, score = alpha_beta(cur_depth, index+1, next_state, next_point, alpha, beta)
+                    if best_score < score:
+                        best_score = score
+                        best_action = move
+                        alpha = max(alpha, best_score)
+                        if beta<=alpha: break
+                    '''best_score = max(score,best_score)
+                    if best_score >= beta: # beta cutoff
+                        break
+                    if best_score > alpha:
+                        alpha = best_score
+                        best_action = move'''
+                    
+            # Opponent: Minimize
+            else:
+                best_score = inf
+                for move in self.getPossibleMoves(curstate, self.pid^1):
+                    next_state, next_point = self.performNextMove(curstate, move , cur_point ,self.pid^1)
+                    _, score = alpha_beta(cur_depth, index+1, next_state, next_point, alpha, beta)
+                    if best_score > score:
+                        best_score = score
+                        best_action = move
+                        beta = min(alpha, best_score)
+                        if beta<=alpha: break
+                    '''best_score = min(best_score,score)
+                    if best_score <= alpha: # alpha cutoff
+                        break
+                    if best_score < beta:
+                        alpha = best_score
+                        best_action = move'''
+            # leaf state
+            if best_score == inf or best_score == -inf or best_score is None:
+                is_end = self.getResult(curstate, cur_point)
+                return None, self.evaluate(cur_point, is_end)
+            return best_action, best_score
+        
+        action, _ = alpha_beta(0,0,state_game,cur_point,-inf,inf)
+        print(action)
+        return self.getPossibleMoves(state_game , self.pid)[0] if action == None else action
 class Human(Agent):
     def __init__(self, player_id, screen, table):
         super().__init__(player_id, screen, table)
@@ -46,6 +232,10 @@ class Human(Agent):
         for i in range(0,5):
             if state_game[i][0] > 0:
                 available_boxes.append(i)
+
+        if(len(available_boxes) == 0):
+            self.table.borrow(self.player_id)
+
         while True:
             isClicked = False
 
