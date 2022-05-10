@@ -81,9 +81,9 @@ class TableGUI(Table):
     def __draw_table(self, turn):
         self.screen.fill((255, 255, 255))
         self.screen.blit(background, (0, 0))
-        to_screen(self.screen, "Player 1", 200, 60, 25, COLOR.DARKRED)
+        to_screen(self.screen, "Player 2", 200, 60, 25, COLOR.DARKRED)
         to_screen(self.screen, str(self.player2Score), 370, 40, 50, COLOR.DARKRED)
-        to_screen(self.screen, "Player 0", 470, 380, 25, COLOR.PURPLE)
+        to_screen(self.screen, "Player 1", 470, 380, 25, COLOR.PURPLE)
         to_screen(self.screen, str(self.player1Score), 370, 365, 50, COLOR.PURPLE)
         if turn == 0:
             to_screen(self.screen, "Player " + str(turn) + " is thinking...", 300, 450, 20 , COLOR.PURPLE)
