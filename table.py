@@ -1,6 +1,4 @@
 from copy import deepcopy
-import tkinter as tk
-from tkinter import messagebox
 from time import sleep
 from support import *
 ### Deadline : 16h - 17h họp lại
@@ -20,10 +18,7 @@ from support import *
 # Hiện lên cửa sổ chọn mức độ trò chơi
 
 
-myState = [
-    [1, 0], [7, 0], [0, 0], [7, 0], [7, 0], [2, 1],
-    [1, 0], [1, 0], [8, 0], [7, 0], [7, 0], [1, 0]
-]
+
 
 
 class Table:  
@@ -245,26 +240,7 @@ class Table:
 
     '''Checking whether if Game is finished'''
     def finished(self):
-        if finished(self.state):
-            # You won
-            if self.playerScore[0] > self.playerScore[1]:
-                result = 'You won!'
-            # Computer won
-            elif self.playerScore[0] < self.playerScore[1]:
-                result = 'Computer won!'
-            # Or draw
-            else: result = 'Draw'
-            # Show the message box to inform the result
-            print(result)
-            while True:
-                tk.Tk().wm_withdraw()  # to hide the main window
-                messagebox.showinfo('End Game !', 'Result: ' + result)
-                sleep(1)
-                break
-            return True
-        else:
-            return False
+        return self.state[5] == [0, 0] and self.state[11] == [0, 0]
+    
     
 
-def finished(_state):
-    return  _state[5] == [0, 0] and _state[11] == [0, 0]

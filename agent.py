@@ -1,5 +1,5 @@
 import pygame
-from table import finished
+
 import os
 from GUI import RES,QUANVALUE
 from random import randint,choice,shuffle
@@ -8,6 +8,8 @@ from copy import deepcopy
 Lbutton = pygame.image.load(os.path.join(RES, 'left.png'))
 Rbutton = pygame.image.load(os.path.join(RES, 'right.png'))
 
+def finished(self):
+        return self.state[5] == [0, 0] and self.state[11] == [0, 0]
 class Agent:
     def __init__(self, player_id, screen=None, table=None):
         self.INF = 70
@@ -22,7 +24,7 @@ class RandomAgent(Agent):
         pos = 0
         available_boxes = []
         if self.player_id == "player2":
-            for i in range(6,10):
+            for i in range(6,11):
                 if state_game[i][0] > 0:
                     available_boxes.append(i)
             if(len(available_boxes) == 0):
@@ -57,6 +59,7 @@ class Human(Agent):
 
         if(len(available_boxes) == 0):
             self.table.borrow(self.player_id)
+            available_boxes = range(0,5)
 
         while True:
             isClicked = False
