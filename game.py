@@ -65,7 +65,7 @@ def goFirst(screen,font,fontbig):
     text1 = font.render(' A - Player1', True, color)
     text2 = font.render(' B - Player2', True, color)
 
-    screen.blit(label, (100,100))
+    screen.blit(label, (275,100))
     screen.blit(noti, (200,50+150))
     screen.blit(text1, (200,80+150))
     screen.blit(text2, (200,110+150))
