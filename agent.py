@@ -8,6 +8,8 @@ from copy import deepcopy
 Lbutton = pygame.image.load(os.path.join(RES, 'left.png'))
 Rbutton = pygame.image.load(os.path.join(RES, 'right.png'))
 NUM_SQUARE = 12
+QUAN_1 = 5
+QUAN_2 = 11
 class Agent:
     def __init__(self, player_id, screen=None, table=None):
         self.INF = 70
@@ -15,6 +17,7 @@ class Agent:
         self.player_id = player_id
         self.screen = screen
         self.table = table
+        
 class RandomAgent(Agent):
     def __init__(self, player_id, screen, table):
         super().__init__(player_id, screen, table)
@@ -50,23 +53,23 @@ class Minimax(Agent):
     # Check if two kings are not eaten: 
     # Input: state
     # Output: bool value decides gameover
-    def finished(self,_state):
-        return _state[NUM_SQUARE-1] == [0, 0] and _state[NUM_SQUARE//2-1] == [0, 0]
+    #def finished(self,_state):
+    #    return _state[QUAN_2] == [0, 0] and _state[QUAN_1] == [0, 0]
     
     # Check Nợ quân: (new_state, new_point)
     def handleBorrowStack(self,_state_game,_player_score):
         state, player_score = deepcopy(_state_game), deepcopy(_player_score)
 
-        if not any([i[0] for i in state[0:NUM_SQUARE//2-1]]):
+        if not any([i[0] for i in state[0:QUAN_1]]):
             player_score[0] -= 5
 
-            for i in range(1,NUM_SQUARE//2):
+            for i in range(0,QUAN_1):
                 state[i][0] = 1
         
-        if not any([i[0] for i in state[NUM_SQUARE//2:NUM_SQUARE-1]]):
+        if not any([i[0] for i in state[QUAN_1+1:QUAN_2]]):
             player_score[1] -= 5
 
-            for i in range(7,NUM_SQUARE):
+            for i in range(QUAN_1+1,QUAN_2):
                 state[i][0] = 1
         return state, player_score
     
@@ -75,8 +78,8 @@ class Minimax(Agent):
         state, player_point = deepcopy(state_), deepcopy(cur_point_)
         if finished(state):
             # get all remaining prawns in the 
-            player_point[0] += sum([i[0] for i in state[0:NUM_SQUARE//2-1]])
-            player_point[1] += sum([i[0] for i in state[NUM_SQUARE//2:NUM_SQUARE-1]])
+            player_point[0] += sum([i[0] for i in state[0:QUAN_1]])
+            player_point[1] += sum([i[0] for i in state[QUAN_1+1:QUAN_2]])
 
             if player_point[0] > player_point[1]: # Player 0 wins
                 return (True, -self.INF if self.player_id else self.INF)
@@ -91,11 +94,11 @@ class Minimax(Agent):
     def getPossibleMoves(self, state, player_id): #list of actions: [(index,'l'),(index,'r')]
         list_of_action = []
         if not player_id:
-            for i in range(0, NUM_SQUARE//2-1):
+            for i in range(0, QUAN_1):
                 if state[i][0]: # prawns in that square
                     list_of_action.extend([(i,'Left'), (i,'Right')])
         else:
-            for i in range(NUM_SQUARE//2, NUM_SQUARE-1):
+            for i in range(QUAN_1+1, QUAN_2):
                 if state[i][0]:
                     list_of_action.extend([(i,'Left'), (i,'Right')])
 
@@ -116,7 +119,7 @@ class Minimax(Agent):
     def performNextMove(self , state__, move , cur_point_ , id): # Khởi tạo bước đi trong bàn cờ
         state , cur_point = deepcopy(state__), deepcopy(cur_point_)
         # direction: 1 for RIGHT and 2 for LEFT
-        direction = 1 if move[1] == 'Right' else 2
+        direction = 1 if move[1] == 'Right' else -1
         cur_pos = move[0]
         next_pos = (cur_pos + direction) % NUM_SQUARE
 
@@ -129,7 +132,7 @@ class Minimax(Agent):
         while True:
             # if next_pos is a King's spot or (next_pos and next of next_pos are empty)
             # -> No more consecutive pick-up and point not increased
-            if next_pos == NUM_SQUARE//2-1 or next_pos == NUM_SQUARE-1 or (state[next_pos][0] == 0 and state[(next_pos + direction) % NUM_SQUARE][0] == 0 and
+            if next_pos == QUAN_1 or next_pos == QUAN_2 or (state[next_pos][0] == 0 and state[(next_pos + direction) % NUM_SQUARE][0] == 0 and
                                     state[(next_pos + direction) % NUM_SQUARE][1] != 1):
                                     return state , cur_point
                                 
@@ -184,12 +187,6 @@ class Minimax(Agent):
                         best_action = move
                         alpha = max(alpha, best_score)
                         if beta<=alpha: break
-                    '''best_score = max(score,best_score)
-                    if best_score >= beta: # beta cutoff
-                        break
-                    if best_score > alpha:
-                        alpha = best_score
-                        best_action = move'''
                     
             # Opponent: Minimize
             else:
@@ -202,21 +199,24 @@ class Minimax(Agent):
                         best_action = move
                         beta = min(alpha, best_score)
                         if beta<=alpha: break
-                    '''best_score = min(best_score,score)
-                    if best_score <= alpha: # alpha cutoff
-                        break
-                    if best_score < beta:
-                        alpha = best_score
-                        best_action = move'''
             # leaf state
             if best_score == inf or best_score == -inf or best_score is None:
                 is_end = self.getResult(curstate, cur_point)
                 return None, self.evaluate(cur_point, is_end)
             return best_action, best_score
         
-        action, _ = alpha_beta(0,0,state_game,cur_point,-inf,inf)
-        print(action)
-        return self.getPossibleMoves(state_game , self.pid)[0] if action == None else action
+        final_score,final_action = -inf,None
+        curstate , cur_point = self.handleBorrowStack(state_game, cur_point)
+        alpha = -inf
+        for move in self.getPossibleMoves(curstate, self.pid):
+            next_state, next_point = self.performNextMove(curstate, move , cur_point ,self.pid^1)
+            _, score = alpha_beta(0,1,next_state, next_point,alpha,inf)
+            if score>final_score:
+                final_score = score
+                final_action = move
+            alpha = max(alpha,final_score)
+            print(move, score)
+        return self.getPossibleMoves(state_game , self.pid)[0] if final_action == None else final_action
 class Human(Agent):
     def __init__(self, player_id, screen, table):
         super().__init__(player_id, screen, table)
