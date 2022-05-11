@@ -227,8 +227,7 @@ class Table:
                 c1, swap = self.handleMoving(player, index, direction)
             else: 
                 c1, swap = self.handleMoving(player, c1.index, direction)
-
-        return False
+ 
            
     def validFinish(self):
         quanPhai = self.state[5][0] + self.state[5][1]
