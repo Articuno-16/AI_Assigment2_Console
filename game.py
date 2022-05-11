@@ -127,9 +127,9 @@ class Game:
         if str == "easy":
             return RandomAgent(playerID,self.screen,self.table)
         elif str == 'medium':
-            return Minimax(playerID,self.screen,self.table,depth=2)
+            return Minimax(playerID,self.screen,self.table,depth=3)
         elif str == 'hard':
-            return Minimax(playerID,self.screen,self.table,depth=9)
+            return Minimax(playerID,self.screen,self.table,depth=4)
         elif str == 'human':
             return Human(playerID,self.screen,self.table)
         else :

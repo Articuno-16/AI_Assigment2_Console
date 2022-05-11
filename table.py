@@ -153,7 +153,7 @@ class Table:
             return cell1Next, cell2Next
 
     # Moving function
-    def move(self, player, index, direction):
+    def move(self, player, index, direction,printed=True):
         tmp = self.state[index][0]
         if (direction == 'Right'):
             for i in range(tmp):
@@ -167,11 +167,13 @@ class Table:
             nextnextIndex = calculateIndex(nextIndex - 1)
 
         self.state[index][0] = 0
-        self.drawTable()
+        if printed:
+            self.drawTable()
     
         cell1 = Cell(nextIndex, self.state[nextIndex][0])
         cell2 = Cell(nextnextIndex, self.state[nextnextIndex][0])
-        return cell1, cell2       
+        return cell1, cell2
+           
 
     def handleMoving(self, player, index, direction):
         cell1, cell2 = self.move(player, index, direction)

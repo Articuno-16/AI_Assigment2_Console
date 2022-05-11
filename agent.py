@@ -1,4 +1,5 @@
 import pygame
+import time
 from table import *
 import os
 from GUI import RES,QUANVALUE
@@ -43,7 +44,7 @@ class RandomAgent(Agent):
             pos = choice(available_boxes)
         print(pos, choice(['Left', 'Right']))
         return pos, choice(['Left', 'Right'])
-     
+
 class Minimax(Agent):
     def __init__(self, player_id, screen, table, depth):
         super().__init__(player_id, screen, table)
@@ -118,6 +119,14 @@ class Minimax(Agent):
     # Output: (new_state, new_point)
     def performNextMove(self , state__, move , cur_point_ , id): # Khởi tạo bước đi trong bàn cờ
         state , cur_point = deepcopy(state__), deepcopy(cur_point_)
+        '''table = Table()
+        table.state = state
+        table.playerScore = cur_point
+        if id:
+            table.move("player2",move[0],move[1],False)
+        else:
+            table.move("player1",move[0],move[1],False)
+        return table.state, table.playerScore'''
         # direction: 1 for RIGHT and 2 for LEFT
         direction = 1 if move[1] == 'Right' else -1
         cur_pos = move[0]
@@ -162,16 +171,16 @@ class Minimax(Agent):
                 state[cur_pos][0] //= NUM_SQUARE
                 
     def execute(self, state_game): # Alpha_Beta Algorithms
-        cur_point = self.table.playerScore
+        start = time.time()
+        cur_score = [self.table.player1Score, self.table.player2Score]
         inf = float('inf')
         def alpha_beta(cur_depth, index, curstate, cur_point, alpha, beta):
-            #print(curstate)
             index = index%2
-            cur_depth += 1
             # return if max depth or gameover
             is_end = self.getResult(curstate, cur_point)
             if is_end[0] or cur_depth == self.depth:
                 return None, self.evaluate(cur_point, is_end)
+
             # init
             best_score, best_action = None, None
             curstate , cur_point = self.handleBorrowStack(curstate, cur_point)
@@ -185,37 +194,40 @@ class Minimax(Agent):
                     if best_score < score:
                         best_score = score
                         best_action = move
-                        alpha = max(alpha, best_score)
-                        if beta<=alpha: break
+                    if beta<=best_score:
+                        return best_action, best_score
+                    alpha = max(alpha, best_score)
                     
             # Opponent: Minimize
             else:
                 best_score = inf
                 for move in self.getPossibleMoves(curstate, self.pid^1):
                     next_state, next_point = self.performNextMove(curstate, move , cur_point ,self.pid^1)
-                    _, score = alpha_beta(cur_depth, index+1, next_state, next_point, alpha, beta)
+                    #print(next_point)
+                    
+                    _, score = alpha_beta(cur_depth+1, index+1, next_state, next_point, alpha, beta)
                     if best_score > score:
                         best_score = score
                         best_action = move
-                        beta = min(alpha, best_score)
-                        if beta<=alpha: break
-            # leaf state
-            if best_score == inf or best_score == -inf or best_score is None:
-                is_end = self.getResult(curstate, cur_point)
-                return None, self.evaluate(cur_point, is_end)
+                    if best_score<=alpha:
+                        return best_action, best_score
+                    beta = min(beta, best_score)
             return best_action, best_score
         
         final_score,final_action = -inf,None
-        curstate , cur_point = self.handleBorrowStack(state_game, cur_point)
+        curstate , cur_point = self.handleBorrowStack(state_game, cur_score)
         alpha = -inf
         for move in self.getPossibleMoves(curstate, self.pid):
-            next_state, next_point = self.performNextMove(curstate, move , cur_point ,self.pid^1)
+            next_state, next_point = self.performNextMove(curstate, move , cur_point ,self.pid)
+            #print(next_state, next_point)
             _, score = alpha_beta(0,1,next_state, next_point,alpha,inf)
             if score>final_score:
                 final_score = score
                 final_action = move
             alpha = max(alpha,final_score)
-            print(move, score)
+            #print(move, score)
+        run_time = time.time() - start
+        print("Runtime: ",run_time)
         return self.getPossibleMoves(state_game , self.pid)[0] if final_action == None else final_action
 class Human(Agent):
     def __init__(self, player_id, screen, table):
