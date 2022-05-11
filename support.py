@@ -19,14 +19,23 @@ def getUser(user):
     return PLAYER1
 
 def getInput(player=None):
+    direction = None
     while True:
         user = getUser(player)
-        index = int(input('Index: '))
+        index = int(input('Index (0-4): ')) if user == PLAYER1 else int(input('Index (6-10): '))
         direction = input('Direction: ')
-        direction = RIGHT if direction == 'r' or direction == 'R' else LEFT
-        if validInput(user, index): break
+        direction = validDirection(direction)
+        if validInput(user, index) and direction != False: break
     return user, index, direction
-
+def validDirection(direction):
+    char = direction.lower()
+    if char != 'r' and char != 'l':
+        print('Type R/r for Right and L/l for Left')
+        return False
+    elif char == 'r':
+        return RIGHT
+    else:
+        return LEFT
 def validInput(user, index):
     if user is PLAYER1:
         if 0 <= index < 5: 
@@ -38,7 +47,7 @@ def validInput(user, index):
         if 6 <= index < 11: 
             return True
         else: 
-            print('You must input from 6 to 11')
+            print('You must input from 6 to 10')
             return False
 
 class Cell:

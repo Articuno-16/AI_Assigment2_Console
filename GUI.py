@@ -78,7 +78,7 @@ class TableGUI(Table):
             pygame.display.set_caption(SCREEN_CAPTION)
 
 
-    def __draw_table(self, turn):
+    def draw_table(self, turn):
         self.screen.fill((255, 255, 255))
         self.screen.blit(background, (0, 0))
         to_screen(self.screen, "Player 2", 200, 60, 25, COLOR.DARKRED)
@@ -86,9 +86,9 @@ class TableGUI(Table):
         to_screen(self.screen, "Player 1", 470, 380, 25, COLOR.PURPLE)
         to_screen(self.screen, str(self.player1Score), 370, 365, 50, COLOR.PURPLE)
         if turn == 0:
-            to_screen(self.screen, "Player " + str(turn) + " is thinking...", 300, 450, 20 , COLOR.PURPLE)
+            to_screen(self.screen, "Player " + str(turn + 1) + " is thinking...", 300, 450, 20 , COLOR.PURPLE)
         else:
-            to_screen(self.screen, "Player " + str(turn) + " is thinking...", 300, 10, 20, COLOR.RED)
+            to_screen(self.screen, "Player " + str(turn + 1) + " is thinking...", 300, 10, 20, COLOR.RED)
         # to_screen(self.screen, str(self.winner), 150, 250, 25, RED)
 
 
@@ -167,4 +167,4 @@ class TableGUI(Table):
         pygame.display.flip()
     
     def redraw(self, turn):
-        self.__draw_table(turn)
+        self.draw_table(turn)

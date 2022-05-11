@@ -1,7 +1,7 @@
 from time import sleep
 import pygame,sys
 import os
-from agent import Agent, Human, RandomAgent
+from agent import Agent, Human, Minimax, RandomAgent
 import tkinter as tk
 from tkinter import messagebox
 
@@ -24,9 +24,9 @@ def text_to_screen(screen, text, x, y, fontsize, color):
 def getMenu(screen,font,fontbig):
     background = pygame.image.load(os.path.join(RES, 'background.png')) 
     screen.blit(background, (0, 0))
-    pygame.display.set_caption("Madarin Capture Square")
+    pygame.display.set_caption("Mandarin Capture Square")
     color=(255,255,255)
-    label = fontbig.render(' MADARIN CAPTURE SQUARE ', True, (255,255,23))
+    label = fontbig.render(' MANDARIN CAPTURE SQUARE ', True, (255,255,23))
     noti = font.render(' Press To Play: ', True, color)
     text1 = font.render(' A - Easy', True, color)
     text2 = font.render(' B - Medium', True, color)
@@ -174,9 +174,9 @@ class Game:
         if str == "easy":
             return RandomAgent(playerID,self.screen,self.table)
         elif str == 'medium':
-            return RandomAgent(playerID,self.screen,self.table)
+            return Minimax(playerID,self.screen,self.table,depth=3)
         elif str == 'hard':
-            return RandomAgent(playerID,self.screen,self.table)
+            return Minimax(playerID,self.screen,self.table,depth=4)
         elif str == 'human':
             return Human(playerID,self.screen,self.table)
         else :

@@ -1,4 +1,6 @@
 from copy import deepcopy
+import tkinter as tk
+from tkinter import messagebox
 from time import sleep
 from support import *
 ### Deadline : 16h - 17h họp lại
@@ -18,7 +20,10 @@ from support import *
 # Hiện lên cửa sổ chọn mức độ trò chơi
 
 
-
+myState = [
+    [1, 0], [7, 0], [0, 0], [7, 0], [7, 0], [2, 1],
+    [1, 0], [1, 0], [8, 0], [7, 0], [7, 0], [1, 0]
+]
 
 
 class Table:  
@@ -148,7 +153,7 @@ class Table:
             return cell1Next, cell2Next
 
     # Moving function
-    def move(self, player, index, direction):
+    def move(self, player, index, direction,printed=True):
         tmp = self.state[index][0]
         if (direction == 'Right'):
             for i in range(tmp):
@@ -162,11 +167,13 @@ class Table:
             nextnextIndex = calculateIndex(nextIndex - 1)
 
         self.state[index][0] = 0
-        self.drawTable()
+        if printed:
+            self.drawTable()
     
         cell1 = Cell(nextIndex, self.state[nextIndex][0])
         cell2 = Cell(nextnextIndex, self.state[nextnextIndex][0])
-        return cell1, cell2       
+        return cell1, cell2
+           
 
     def handleMoving(self, player, index, direction):
         cell1, cell2 = self.move(player, index, direction)
@@ -220,8 +227,7 @@ class Table:
                 c1, swap = self.handleMoving(player, index, direction)
             else: 
                 c1, swap = self.handleMoving(player, c1.index, direction)
-
-        return False
+ 
            
     def validFinish(self):
         quanPhai = self.state[5][0] + self.state[5][1]
@@ -240,7 +246,26 @@ class Table:
 
     '''Checking whether if Game is finished'''
     def finished(self):
-        return self.state[5] == [0, 0] and self.state[11] == [0, 0]
-    
+        if finished(self.state):
+            # You won
+            if self.playerScore[0] > self.playerScore[1]:
+                result = 'You won!'
+            # Computer won
+            elif self.playerScore[0] < self.playerScore[1]:
+                result = 'Computer won!'
+            # Or draw
+            else: result = 'Draw'
+            # Show the message box to inform the result
+            print(result)
+            while True:
+                tk.Tk().wm_withdraw()  # to hide the main window
+                messagebox.showinfo('End Game !', 'Result: ' + result)
+                sleep(1)
+                break
+            return True
+        else:
+            return False
     
 
+def finished(_state):
+    return  _state[5] == [0, 0] and _state[11] == [0, 0]
