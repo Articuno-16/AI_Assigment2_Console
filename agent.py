@@ -82,7 +82,7 @@ class Minimax(Agent):
     def getResult(self, state_, cur_point_): # (Finished?, Who won?)
         state, player_point = deepcopy(state_), deepcopy(cur_point_)
         if finished(state):
-            # get all remaining prawns in the 
+            # get all remaining prawns in the table
             player_point[0] += sum([i[0] for i in state[0:QUAN_1]])
             player_point[1] += sum([i[0] for i in state[QUAN_1+1:QUAN_2]])
 

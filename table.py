@@ -246,26 +246,4 @@ class Table:
 
     '''Checking whether if Game is finished'''
     def finished(self):
-        if finished(self.state):
-            # You won
-            if self.playerScore[0] > self.playerScore[1]:
-                result = 'You won!'
-            # Computer won
-            elif self.playerScore[0] < self.playerScore[1]:
-                result = 'Computer won!'
-            # Or draw
-            else: result = 'Draw'
-            # Show the message box to inform the result
-            print(result)
-            while True:
-                tk.Tk().wm_withdraw()  # to hide the main window
-                messagebox.showinfo('End Game !', 'Result: ' + result)
-                sleep(1)
-                break
-            return True
-        else:
-            return False
-    
-
-def finished(_state):
-    return  _state[5] == [0, 0] and _state[11] == [0, 0]
+        return self.state[5] == [0, 0] and self.state[11] == [0, 0]
