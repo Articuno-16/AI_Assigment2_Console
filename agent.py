@@ -55,12 +55,6 @@ class Minimax(Agent):
         self.pid = 0 if player_id == "player1" else 1
         self.depth = depth
         
-    # Check if two kings are not eaten: 
-    # Input: state
-    # Output: bool value decides gameover
-    #def finished(self,_state):
-    #    return _state[QUAN_2] == [0, 0] and _state[QUAN_1] == [0, 0]
-    
     # Check Nợ quân: (new_state, new_point)
     def handleBorrowStack(self,_state_game,_player_score):
         state, player_score = deepcopy(_state_game), deepcopy(_player_score)
@@ -123,14 +117,6 @@ class Minimax(Agent):
     # Output: (new_state, new_point)
     def performNextMove(self , state__, move , cur_point_ , id): # Khởi tạo bước đi trong bàn cờ
         state , cur_point = deepcopy(state__), deepcopy(cur_point_)
-        '''table = Table()
-        table.state = state
-        table.playerScore = cur_point
-        if id:
-            table.move("player2",move[0],move[1],False)
-        else:
-            table.move("player1",move[0],move[1],False)
-        return table.state, table.playerScore'''
         # direction: 1 for RIGHT and 2 for LEFT
         direction = 1 if move[1] == 'Right' else -1
         cur_pos = move[0]

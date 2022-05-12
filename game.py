@@ -58,7 +58,7 @@ def getMenu(screen,font,fontbig):
 def goFirst(screen,font,fontbig):
     background = pygame.image.load(os.path.join(RES, 'background.png')) 
     screen.blit(background, (0, 0))
-    pygame.display.set_caption("Madarin Capture Square")
+    pygame.display.set_caption("Mandarin Capture Square")
     color=(255,102,0)
     label = fontbig.render(' Who go First ', True, (255,0,0))
     noti = font.render(' Press To Play: ', True, color)
@@ -112,7 +112,7 @@ class Game:
         level = getMenu(self.screen,self.font,self.fontbig)
 
         # Change PLAYER1 or PLAYER2 to go first or seccond 
-        self.players.append(self.AgentFactory('human',PLAYER1))
+        self.players.append(self.AgentFactory("human",PLAYER1))
         self.players.append(self.AgentFactory(level,PLAYER2))
 
         turn = goFirst(self.screen,self.font,self.fontbig)
@@ -153,13 +153,6 @@ class Game:
             messagebox.showinfo('End Game !', 'Result: ' + result)
             sleep(1)
             break  
-        ##############
-        # while True:
-        #     for event in pygame.event.get():
-        #         if event.type == pygame.QUIT:
-        #             pygame.quit()
-        #             sys.exit()
-
 
     def reset(self): 
         self.table = TableGUI(self.screen)
