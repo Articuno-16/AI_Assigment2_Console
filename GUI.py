@@ -94,29 +94,22 @@ class TableGUI(Table):
 
 
         # So quan trong cac o
-        to_screen(self.screen, str(self.state[0][0]), 170, 250, 20, COLOR.ORANGE) #No. 1
-        to_screen(self.screen, str(self.state[1][0]), 270, 250, 20, COLOR.ORANGE) #No. 2
-        to_screen(self.screen, str(self.state[2][0]), 370, 250, 20, COLOR.ORANGE) #No. 3
-        to_screen(self.screen, str(self.state[3][0]), 470, 250, 20, COLOR.ORANGE) #No. 4
-        to_screen(self.screen, str(self.state[4][0]), 570, 250, 20, COLOR.ORANGE) #No. 5
-
-        to_screen(self.screen, str(self.state[10][0]), 170, 150, 20, COLOR.ORANGE) #No. 11
-        to_screen(self.screen, str(self.state[9][0]), 270, 150, 20, COLOR.ORANGE) #No. 10
-        to_screen(self.screen, str(self.state[8][0]), 370, 150, 20, COLOR.ORANGE) #No. 9
-        to_screen(self.screen, str(self.state[7][0]), 470, 150, 20, COLOR.ORANGE) #No. 8
-        to_screen(self.screen, str(self.state[6][0]), 570, 150, 20, COLOR.ORANGE) #No. 7
+        for i in range (0,5):
+            to_screen(self.screen, str(self.state[i][0]), 170+i*100, 250, 20, COLOR.ORANGE)
+        for i in range (10,5):
+            to_screen(self.screen, str(self.state[10][0]), 170+(10-i)*100, 150, 20, COLOR.ORANGE) 
         
-
+        # So dan trong o ben trai 
         to_screen(self.screen, str(self.state[11][1]), 120, 170, 30, COLOR.ORANGE)
-        to_screen(self.screen, str(self.state[11][0]), 120, 230, 20, COLOR.ORANGE) #No. 0
-
+        to_screen(self.screen, str(self.state[11][0]), 120, 230, 20, COLOR.ORANGE) 
+        # So dan trong o ben phai
         to_screen(self.screen, str(self.state[5][1]), 670, 170, 30, COLOR.ORANGE)
-        to_screen(self.screen, str(self.state[5][0]), 670, 230, 20, COLOR.ORANGE) #No. 6
+        to_screen(self.screen, str(self.state[5][0]), 670, 230, 20, COLOR.ORANGE) 
 
-        # Ve cac quan va Quan - Drawing the stones
+        # Quan ben trai
         if (self.state[11][1] == 1):
             self.screen.blit(QUAN, (80, 200))
-
+        # Quan ben phai
         if (self.state[5][1] == 1):
             self.screen.blit(QUAN, (685, 200))
 
