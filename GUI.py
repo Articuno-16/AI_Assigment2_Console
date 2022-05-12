@@ -24,15 +24,15 @@ SCREEN_CAPTION = 'O An Quan'
 class Color():
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
-    RED = (255, 0, 0)
+    RED = (70, 0, 0)
     GREY = (128, 128, 128)
     YELLOW = (255, 255, 0)
     GREEN = (126, 202, 24)
     BLUE = (0, 0, 255)
     PALEGREEN = (130, 224, 170)
     ORANGE = (211, 84, 0)
-    PURPLE = (91, 44, 111)
-    DARKRED = (202, 24, 24)
+    PURPLE = (73,0,131)
+    DARKRED = (137,14,14)
 
 ##################################################
 background = pygame.image.load(os.path.join(RES, 'background.png'))   
@@ -89,7 +89,6 @@ class TableGUI(Table):
             to_screen(self.screen, "Player " + str(turn) + " is thinking...", 300, 450, 20 , COLOR.PURPLE)
         else:
             to_screen(self.screen, "Player " + str(turn) + " is thinking...", 300, 10, 20, COLOR.RED)
-        # to_screen(self.screen, str(self.winner), 150, 250, 25, RED)
 
 
 

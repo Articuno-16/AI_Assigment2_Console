@@ -24,19 +24,19 @@ def text_to_screen(screen, text, x, y, fontsize, color):
 def getMenu(screen,font,fontbig):
     background = pygame.image.load(os.path.join(RES, 'background.png')) 
     screen.blit(background, (0, 0))
-    pygame.display.set_caption("Madarin Capture Square")
-    color=(255,255,255)
-    label = fontbig.render(' MADARIN CAPTURE SQUARE ', True, (255,255,23))
+    pygame.display.set_caption("Mandarin Capture Square")
+    color=(255,102,0)
+    label = fontbig.render(' MANDARIN CAPTURE SQUARE ', True, (255,0,0))
     noti = font.render(' Press To Play: ', True, color)
     text1 = font.render(' A - Easy', True, color)
     text2 = font.render(' B - Medium', True, color)
     text3 = font.render(' C - Hard', True, color)
 
     screen.blit(label, (100,100))
-    screen.blit(noti, (200,50+150))
-    screen.blit(text1, (200,80+150))
-    screen.blit(text2, (200,110+150))
-    screen.blit(text3, (200,140+150))
+    screen.blit(noti, (200,60+150))
+    screen.blit(text1, (220,100+150))
+    screen.blit(text2, (220,130+150))
+    screen.blit(text3, (220,160+150))
 
     while True:
         for event in pygame.event.get():
@@ -59,16 +59,16 @@ def goFirst(screen,font,fontbig):
     background = pygame.image.load(os.path.join(RES, 'background.png')) 
     screen.blit(background, (0, 0))
     pygame.display.set_caption("Madarin Capture Square")
-    color=(255,255,255)
-    label = fontbig.render(' Who go First ', True, (255,255,23))
+    color=(255,102,0)
+    label = fontbig.render(' Who go First ', True, (255,0,0))
     noti = font.render(' Press To Play: ', True, color)
     text1 = font.render(' A - Player1', True, color)
     text2 = font.render(' B - Player2', True, color)
 
     screen.blit(label, (275,100))
     screen.blit(noti, (200,50+150))
-    screen.blit(text1, (200,80+150))
-    screen.blit(text2, (200,110+150))
+    screen.blit(text1, (215,100+150))
+    screen.blit(text2, (215,130+150))
 
     while True:
         for event in pygame.event.get():
