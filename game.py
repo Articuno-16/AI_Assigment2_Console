@@ -165,7 +165,7 @@ class Game:
 
     def AgentFactory(self,str,playerID):
         if str == "easy":
-            return RandomAgent(playerID,self.screen,self.table)
+            return Minimax(playerID,self.screen,self.table,depth=2)
         elif str == 'medium':
             return Minimax(playerID,self.screen,self.table,depth=3)
         elif str == 'hard':
@@ -187,6 +187,7 @@ class Game:
         thinking = []
         self.redraw(turn)
         while not self.finished():
+            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -197,7 +198,7 @@ class Game:
             move = self.players[turn].execute(self.table.state)
             if(turn == 1):
                 end = time.time()    
-            thinking.append(end-start)
+                thinking.append(end-start)
             self.update(self.players[turn].player_id,move)
 
             turn ^= 1
