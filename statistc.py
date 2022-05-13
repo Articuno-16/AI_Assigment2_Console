@@ -6,6 +6,7 @@ if __name__ == "__main__":
     # Chỉnh sửa 2 cái này để chạy
     level = "easy"
     scale = 10
+    first = False
 
     thinking =  []
     number_of_move = []
@@ -16,7 +17,7 @@ if __name__ == "__main__":
     seq = []
     for i in range(scale):
         game = Game()
-        thinking,result = game.statistic(True,level)
+        thinking,result = game.statistic(first,level)
         seq.append(",".join(str(x) for x in thinking))
         size = len(thinking)
         res.append(result)
@@ -34,4 +35,4 @@ if __name__ == "__main__":
                         ,"total_move":number_of_move
                         ,"thinking_time":seq})
 
-    df.to_csv("statistic/{}.csv".format(level))
+    df.to_csv("statistic/{}_{}.csv".format(level,"first" if first else "second" ))
