@@ -1,0 +1,1 @@
+thinking = np.array(thinking)

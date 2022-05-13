@@ -1,0 +1,37 @@
+from tracemalloc import reset_peak
+from game import Game
+import pandas as pd
+import numpy as np
+import pygame
+import sys
+if __name__ == "__main__":
+    # Chỉnh sửa 2 cái này để chạy
+    level = "easy"
+    scale = 10
+
+    thinking =  []
+    number_of_move = []
+    total_thinking_time = []
+    res = [] 
+    max_time = [] 
+    min_time = []
+
+    for i in range(scale):
+        game = Game()
+        thinking,result = game.statistic(True,level)
+        size = len(thinking)
+        res.append(result)
+        thinking = np.array(thinking,dtype=np.float32)
+        number_of_move.append(size)
+        total_thinking_time.append(np.sum(thinking))
+        max_time.append(np.amax(thinking))
+        min_time.append(np.amin(thinking))
+    
+
+    df = pd.DataFrame({ "result":res
+                        ,"max_time":max_time
+                        ,"min_time":min_time
+                        ,"total_thinking_time":total_thinking_time
+                        ,"total_move":number_of_move})
+    print(df)
+    df.to_csv("statistic/{}.csv".format(level))

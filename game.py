@@ -1,10 +1,11 @@
-from time import sleep
+import time
+from time import sleep, time_ns
 import pygame,sys
 import os
 from agent import Agent, Human, Minimax, RandomAgent
 import tkinter as tk
 from tkinter import messagebox
-
+import pandas as pd
 from GUI import TableGUI,SCREEN_WIDTH,SCREEN_HEIGHT,SCREEN_CAPTION,USER_GO_FIRST,RES
 PLAYER1 = 'player1'
 PLAYER2 = 'player2'
@@ -128,7 +129,6 @@ class Game:
 
                         
             move = self.players[turn].execute(self.table.state)
-            print(move)
             self.update(self.players[turn].player_id,move)
 
             print(f"USER_{turn}'s move: {move[0]} {move[1]}")
@@ -174,3 +174,48 @@ class Game:
             return Human(playerID,self.screen,self.table)
         else :
             return RandomAgent(playerID,self.screen,self.table)
+
+    def statistic(self, goFirst, level):
+        # User go first or agent go first
+        turn = 0 if goFirst else 1
+
+        # Change PLAYER1 or PLAYER2 to go first or seccond 
+        self.players.append(self.AgentFactory("random",PLAYER1))
+        self.players.append(self.AgentFactory(level,PLAYER2))
+
+        # Game loop
+        thinking = []
+        self.redraw(turn)
+        while not self.finished():
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()		
+            start = end = 0
+            if(turn == 1):
+                start = time.time()            
+            move = self.players[turn].execute(self.table.state)
+            if(turn == 1):
+                end = time.time()    
+            thinking.append(end-start)
+            self.update(self.players[turn].player_id,move)
+
+            turn ^= 1
+            self.redraw(turn)
+
+        self.redraw(turn)
+     
+
+        ######## Inform the winner
+        # You won
+        if self.table.player1Score > self.table.player2Score:
+            result = -1
+        # Computer won
+        elif self.table.player1Score < self.table.player2Score:
+            result = 1
+        # Or draw
+        else: result = 0
+
+        # Show the message box to inform the result
+        return thinking,result
+       
