@@ -1,6 +1,7 @@
 import pygame
 import time
 from table import *
+from support import *
 
 import os
 from GUI import RES,QUANVALUE
@@ -12,12 +13,11 @@ Rbutton = pygame.image.load(os.path.join(RES, 'right.png'))
 NUM_SQUARE = 12
 QUAN_1 = 5
 QUAN_2 = 11
+INF = 70
 
-def finished(state):
-        return state[5] == [0, 0] and state[11] == [0, 0]
+
 class Agent:
     def __init__(self, player_id, screen=None, table=None):
-        self.INF = 70
         self.quanvalue = QUANVALUE
         self.player_id = player_id
         self.screen = screen
@@ -34,7 +34,8 @@ class RandomAgent(Agent):
                 if state_game[i][0] > 0:
                     available_boxes.append(i)
             if(len(available_boxes) == 0):
-                self.table.borrow("player2")
+                score = [self.table.player1Score, self.table.player2Score]
+                self.table.state, [self.table.player1Score, self.table.player2Score] = handleBorrow(self.table.state, "player2", score)
                 available_boxes = range(6,11)
             pos = choice(available_boxes)
              
@@ -43,7 +44,8 @@ class RandomAgent(Agent):
                 if state_game[i][0] > 0:
                     available_boxes.append(i)
             if(len(available_boxes) == 0):
-                self.table.borrow("player1")
+                score = [self.table.player1Score, self.table.player2Score]
+                self.table.state, [self.table.player1Score, self.table.player2Score] = handleBorrow(self.table.state, "player1", score)
                 available_boxes = range(0,5)
             pos = choice(available_boxes)
         print(pos, choice(['Left', 'Right']))
@@ -52,47 +54,12 @@ class RandomAgent(Agent):
 class Minimax(Agent):
     def __init__(self, player_id, screen, table, depth):
         super().__init__(player_id, screen, table)
-        self.pid = 0 if player_id == "player1" else 1
         self.depth = depth
-        
-    # Check Nợ quân: (new_state, new_point)
-    def handleBorrowStack(self,_state_game,_player_score):
-        state, player_score = deepcopy(_state_game), deepcopy(_player_score)
-
-        if not any([i[0] for i in state[0:QUAN_1]]):
-            player_score[0] -= 5
-
-            for i in range(0,QUAN_1):
-                state[i][0] = 1
-        
-        if not any([i[0] for i in state[QUAN_1+1:QUAN_2]]):
-            player_score[1] -= 5
-
-            for i in range(QUAN_1+1,QUAN_2):
-                state[i][0] = 1
-        return state, player_score
-    
-    # Get Final Result and Winner: (Bool,point)
-    def getResult(self, state_, cur_point_): # (Finished?, Who won?)
-        state, player_point = deepcopy(state_), deepcopy(cur_point_)
-        if finished(state):
-            # get all remaining prawns in the table
-            player_point[0] += sum([i[0] for i in state[0:QUAN_1]])
-            player_point[1] += sum([i[0] for i in state[QUAN_1+1:QUAN_2]])
-
-            if player_point[0] > player_point[1]: # Player 0 wins
-                return (True, -self.INF if self.player_id else self.INF)
-            elif player_point[0] < player_point[1]: # Player 1 wins
-                return (True ,self.INF if self.player_id else -self.INF)
-            else: # It's a Tie
-                return(True,0)
-        # Game has not finished yet
-        return (False, player_point[1] if self.player_id else player_point[0])
 
     # Get moves that are Available: [(index,'l'),(index,'r')],[],[],..
     def getPossibleMoves(self, state, player_id): #list of actions: [(index,'l'),(index,'r')]
         list_of_action = []
-        if not player_id:
+        if player_id == "player1":
             for i in range(0, QUAN_1):
                 if state[i][0]: # prawns in that square
                     list_of_action.extend([(i,'Left'), (i,'Right')])
@@ -112,58 +79,30 @@ class Minimax(Agent):
             return winner[1] + score[1] - score[0] if self.player_id else winner[1] + score[0] - score[1]
         return score[1] - score[0] if self.player_id else score[0] - score[1]
 
-    # Generate next possible move foreach player
-    # Input: state, move, cur_point_, player_id
-    # Output: (new_state, new_point)
-    def performNextMove(self , state__, move , cur_point_ , id): # Khởi tạo bước đi trong bàn cờ
-        state , cur_point = deepcopy(state__), deepcopy(cur_point_)
-        # direction: 1 for RIGHT and 2 for LEFT
-        direction = 1 if move[1] == 'Right' else -1
-        cur_pos = move[0]
-        next_pos = (cur_pos + direction) % NUM_SQUARE
+    # Get Final Result and Winner: (Bool,point)
+    def getResult(self, state, cur_point): # (Finished?, Who won?)
+        state, player_point = deepcopy(state), deepcopy(cur_point)
+        if finished(state):
+            # get all remaining prawns in the table
+            player_point[0] += sum([i[0] for i in state[0:QUAN_1]])
+            player_point[1] += sum([i[0] for i in state[QUAN_1+1:QUAN_2]])
 
-        # Each of next positions get +1 prawn
-        for _ in range(state[cur_pos][0]):
-            state[next_pos][0] += 1
-            next_pos = (next_pos + direction) % NUM_SQUARE
-        state[cur_pos][0] //= NUM_SQUARE
-
-        while True:
-            # if next_pos is a King's spot or (next_pos and next of next_pos are empty)
-            # -> No more consecutive pick-up and point not increased
-            if next_pos == QUAN_1 or next_pos == QUAN_2 or (state[next_pos][0] == 0 and state[(next_pos + direction) % NUM_SQUARE][0] == 0 and
-                                    state[(next_pos + direction) % NUM_SQUARE][1] != 1):
-                                    return state , cur_point
-                                
-            # else if next_pos is empty and (next of next_pos is not empty)
-            # -> point increased
-            elif state[next_pos][0] == 0 and (
-                state[(next_pos + direction) % NUM_SQUARE][0] or state[(next_pos + direction) % NUM_SQUARE][1] == 1
-            ):
-                # reset the current point and state for (next of next_pos)
-                cur_point[id] += state[(next_pos + direction) % NUM_SQUARE][0]
-                state[(next_pos + direction) % NUM_SQUARE][0] = 0
-                # check if we ate the King
-                if state[(next_pos + direction) % NUM_SQUARE][1] == 1:
-                    cur_point[id] += self.quanvalue
-                    state[(next_pos + direction) % NUM_SQUARE][1] = 0
-                # double tap
-                if state[(next_pos + direction*2) % NUM_SQUARE][0] == 0 and state[(next_pos + direction * 2) % NUM_SQUARE][1] != 1:
-                    next_pos = (next_pos + direction * 2) % NUM_SQUARE
-                    
-            # else: next pos is not empty and not a King's spot
-            # -> continue running
-            else:
-                cur_pos = next_pos
-                for _ in range(state[cur_pos][0]):
-                    state[next_pos][0] += 1 
-                    next_pos = (next_pos + direction) % NUM_SQUARE
-                state[cur_pos][0] //= NUM_SQUARE
-                
+            if player_point[0] > player_point[1]: # Player 0 wins
+                return (True, -INF if self.player_id else INF)
+            elif player_point[0] < player_point[1]: # Player 1 wins
+                return (True ,INF if self.player_id else -INF)
+            else: # It's a Tie
+                return(True,0)
+        # Game has not finished yet
+        return (False, player_point[1] if self.player_id else player_point[0])
+    
+    # Main Exec for MINIMAX-AB AGENT            
     def execute(self, state_game): # Alpha_Beta Algorithms
+        state = deepcopy(state_game)
         start = time.time()
         cur_score = [self.table.player1Score, self.table.player2Score]
         inf = float('inf')
+        opp = "player1" if self.player_id=="player2" else "player2"
         def alpha_beta(cur_depth, index, curstate, cur_point, alpha, beta):
             index = index%2
             # return if max depth or gameover
@@ -173,13 +112,17 @@ class Minimax(Agent):
 
             # init
             best_score, best_action = None, None
-            curstate , cur_point = self.handleBorrowStack(curstate, cur_point)
             ## minimax and AB pruning by each turn
             # Player: Maximize
             if index==0:
                 best_score = -inf
-                for move in self.getPossibleMoves(curstate, self.pid):
-                    next_state, next_point = self.performNextMove(curstate, move , cur_point ,self.pid)
+                curstate , cur_point = handleBorrow(curstate, self.player_id, cur_point,True)
+                moves = self.getPossibleMoves(curstate, self.player_id)
+                for move in moves:
+                    #handleMoving(state, score, player, index, direction)
+                    #next_state, next_point = performNextMove(curstate, move , cur_point ,self.pid)
+                    next_state, next_point = movingTurn(curstate, cur_point, self.player_id, move[0], move[1],True)
+                    
                     _, score = alpha_beta(cur_depth, index+1, next_state, next_point, alpha, beta)
                     if best_score < score:
                         best_score = score
@@ -191,10 +134,11 @@ class Minimax(Agent):
             # Opponent: Minimize
             else:
                 best_score = inf
-                for move in self.getPossibleMoves(curstate, self.pid^1):
-                    next_state, next_point = self.performNextMove(curstate, move , cur_point ,self.pid^1)
-                    #print(next_point)
-                    
+                curstate , cur_point = handleBorrow(curstate, opp, cur_point,True)
+                moves = self.getPossibleMoves(curstate, opp)
+                for move in moves:
+                    #next_state, next_point = performNextMove(curstate, move , cur_point, opp)
+                    next_state, next_point = movingTurn(curstate, cur_point, opp, move[0], move[1],True)
                     _, score = alpha_beta(cur_depth+1, index+1, next_state, next_point, alpha, beta)
                     if best_score > score:
                         best_score = score
@@ -205,11 +149,12 @@ class Minimax(Agent):
             return best_action, best_score
         
         final_score,final_action = -inf,None
-        curstate , cur_point = self.handleBorrowStack(state_game, cur_score)
+        curstate , cur_point = handleBorrow(state, self.player_id, cur_score,True)
         alpha = -inf
-        for move in self.getPossibleMoves(curstate, self.pid):
-            next_state, next_point = self.performNextMove(curstate, move , cur_point ,self.pid)
-            #print(next_state, next_point)
+        moves = self.getPossibleMoves(curstate, self.player_id)
+        for move in moves:
+            #next_state, next_point = handleMoving(curstate, cur_point, self.player_id, move[0], move[1])
+            next_state, next_point = movingTurn(curstate, cur_point, self.player_id, move[0], move[1],True)
             _, score = alpha_beta(0,1,next_state, next_point,alpha,inf)
             if score>final_score:
                 final_score = score
@@ -218,7 +163,8 @@ class Minimax(Agent):
             #print(move, score)
         run_time = time.time() - start
         print("Runtime: ",run_time)
-        return self.getPossibleMoves(state_game , self.pid)[0] if final_action == None else final_action
+        return self.getPossibleMoves(state, self.player_id)[0] if final_action == None else final_action
+    
 class Human(Agent):
     def __init__(self, player_id, screen, table):
         super().__init__(player_id, screen, table)

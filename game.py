@@ -102,17 +102,17 @@ class Game:
 
     def update(self,turn, move):
         # Chỉnh lại khúc này
-        self.table.movingTurn(turn, move[0], move[1])
+        self.table.movingTurnTable(turn, move[0], move[1])
 
     def run(self):
         # User go first or agent go first
         turn = 0 if USER_GO_FIRST else 1
 
         # Display Menu
-        level = getMenu(self.screen,self.font,self.fontbig)
+        level = getMenu(self.screen,self.font,self.fontbig).lower()
 
         # Change PLAYER1 or PLAYER2 to go first or seccond 
-        self.players.append(self.AgentFactory("human",PLAYER1))
+        self.players.append(self.AgentFactory("random",PLAYER1))
         self.players.append(self.AgentFactory(level,PLAYER2))
 
         turn = goFirst(self.screen,self.font,self.fontbig)
@@ -159,7 +159,7 @@ class Game:
         self.players.clear()
         self.move = None
         level = getMenu(self.screen,self.font,self.fontbig)
-        self.players.append(self.AgentFactory('human',PLAYER1))
+        self.players.append(self.AgentFactory('random',PLAYER1))
         self.players.append(self.AgentFactory(level,PLAYER2))
 
 
