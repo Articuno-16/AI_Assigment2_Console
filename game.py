@@ -46,9 +46,9 @@ def getMenu(screen,font,fontbig):
                     sys.exit()		
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_a: # dfs
-                    return "Easy"
+                    return "easy"
                 if event.key == pygame.K_b:
-                    return "Medium"
+                    return "medium"
                 if event.key == pygame.K_c:
                     return "hard"
                 if event.type == pygame.QUIT:
@@ -113,7 +113,7 @@ class Game:
         level = getMenu(self.screen,self.font,self.fontbig).lower()
 
         # Change PLAYER1 or PLAYER2 to go first or seccond 
-        self.players.append(self.AgentFactory("random",PLAYER1))
+        self.players.append(self.AgentFactory("human",PLAYER1))
         self.players.append(self.AgentFactory(level,PLAYER2))
 
         turn = goFirst(self.screen,self.font,self.fontbig)
@@ -159,7 +159,7 @@ class Game:
         self.players.clear()
         self.move = None
         level = getMenu(self.screen,self.font,self.fontbig)
-        self.players.append(self.AgentFactory('random',PLAYER1))
+        self.players.append(self.AgentFactory('human',PLAYER1))
         self.players.append(self.AgentFactory(level,PLAYER2))
 
 
