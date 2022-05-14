@@ -178,7 +178,8 @@ class Human(Agent):
                 available_boxes.append(i)
 
         if(len(available_boxes) == 0):
-            self.table.borrow(self.player_id)
+            score = [self.table.player1Score, self.table.player2Score]
+            self.table.state, [self.table.player1Score, self.table.player2Score] = handleBorrow(self.table.state, "player1", score)
             available_boxes = range(0,5)
 
         while True:
