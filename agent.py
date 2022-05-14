@@ -94,7 +94,7 @@ class Minimax(Agent):
             else: # It's a Tie
                 return(True,0)
         # Game has not finished yet
-        return (False, player_point[1] if self.player_id else player_point[0])
+        return (False, player_point[1] if self.player_id=="player2" else player_point[0])
     
     # Main Exec for MINIMAX-AB AGENT            
     def execute(self, state_game): # Alpha_Beta Algorithms
