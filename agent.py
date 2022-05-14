@@ -72,12 +72,12 @@ class Minimax(Agent):
         return list_of_action
     
     # Evaluate after each turn: Int
-    # Input: score: [Int,Int], winner: [Bool,Bool]
+    # Input: score: [Int,Int], winner: [Bool,Int]
     # Output: Evaluated Score
     def evaluate(self, score, winner):
         if winner[0]:
-            return winner[1] + score[1] - score[0] if self.player_id else winner[1] + score[0] - score[1]
-        return score[1] - score[0] if self.player_id else score[0] - score[1]
+            return winner[1] + score[1] - score[0] if self.player_id=="player2" else winner[1] + score[0] - score[1]
+        return score[1] - score[0] if self.player_id=="player2" else score[0] - score[1]
 
     # Get Final Result and Winner: (Bool,point)
     def getResult(self, state, cur_point): # (Finished?, Who won?)
@@ -88,9 +88,9 @@ class Minimax(Agent):
             player_point[1] += sum([i[0] for i in state[QUAN_1+1:QUAN_2]])
 
             if player_point[0] > player_point[1]: # Player 0 wins
-                return (True, -INF if self.player_id else INF)
+                return (True, -INF if self.player_id=="player2" else INF)
             elif player_point[0] < player_point[1]: # Player 1 wins
-                return (True ,INF if self.player_id else -INF)
+                return (True ,INF if self.player_id=="player2" else -INF)
             else: # It's a Tie
                 return(True,0)
         # Game has not finished yet
@@ -119,10 +119,7 @@ class Minimax(Agent):
                 curstate , cur_point = handleBorrow(curstate, self.player_id, cur_point,True)
                 moves = self.getPossibleMoves(curstate, self.player_id)
                 for move in moves:
-                    #handleMoving(state, score, player, index, direction)
-                    #next_state, next_point = performNextMove(curstate, move , cur_point ,self.pid)
                     next_state, next_point = movingTurn(curstate, cur_point, self.player_id, move[0], move[1],True)
-                    
                     _, score = alpha_beta(cur_depth, index+1, next_state, next_point, alpha, beta)
                     if best_score < score:
                         best_score = score
@@ -137,7 +134,6 @@ class Minimax(Agent):
                 curstate , cur_point = handleBorrow(curstate, opp, cur_point,True)
                 moves = self.getPossibleMoves(curstate, opp)
                 for move in moves:
-                    #next_state, next_point = performNextMove(curstate, move , cur_point, opp)
                     next_state, next_point = movingTurn(curstate, cur_point, opp, move[0], move[1],True)
                     _, score = alpha_beta(cur_depth+1, index+1, next_state, next_point, alpha, beta)
                     if best_score > score:
