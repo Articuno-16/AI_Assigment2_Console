@@ -10,5 +10,6 @@ Cài đặt tkinter:
 	
 Cài đặt pandas: 
 	```pip install manager
+	
 	pip install pandas```
 
