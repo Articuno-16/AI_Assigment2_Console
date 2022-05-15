@@ -9,7 +9,7 @@ Cài đặt tkinter:
 	```pip install tk```
 	
 Cài đặt pandas: 
-	```pip install manager
+	```pip install manager```
 	
-	pip install pandas```
+	```pip install pandas```
 
