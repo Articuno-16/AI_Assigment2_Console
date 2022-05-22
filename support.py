@@ -196,8 +196,12 @@ def movingTurn(state, score, player, index, direction,agent=False):
 # Input: State: [[Int, Int]]
 # Output: Bool Flag
 def finished(state):
-    return state[5] == [0, 0] and state[11] == [0, 0]    
+    return state[5] == [0, 0] and state[11] == [0, 0]
+    
 
+
+
+    
 #########################################################
 # Class storing cell information
 class Cell:
@@ -205,3 +209,12 @@ class Cell:
         self.index = index
         self.isQuanCell = True if self.index == 5 or self.index == 11 else False
         self.score = score
+        
+# Normalize Map Number to [0,1]
+def normalize(d,size):
+    for item in d:
+        d[item] /= size
+    return d
+
+if __name__ == "__main__":
+    createRandomDataset(10)

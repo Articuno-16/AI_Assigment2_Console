@@ -2,7 +2,7 @@ import time
 from time import sleep, time_ns
 import pygame,sys
 import os
-from agent import Agent, Human, Minimax, RandomAgent
+from agent import Agent, Human, Minimax, NaiveBayes, RandomAgent
 import tkinter as tk
 from tkinter import messagebox
 import pandas as pd
@@ -165,7 +165,7 @@ class Game:
 
     def AgentFactory(self,str,playerID):
         if str == "easy":
-            return Minimax(playerID,self.screen,self.table,depth=2)
+            return NaiveBayes(playerID,self.screen,self.table)
         elif str == 'medium':
             return Minimax(playerID,self.screen,self.table,depth=3)
         elif str == 'hard':
@@ -178,7 +178,7 @@ class Game:
     def statistic(self, goFirst, level):
         # User go first or agent go first
         turn = 0 if goFirst else 1
-
+        moves = []
         # Change PLAYER1 or PLAYER2 to go first or seccond 
         self.players.append(self.AgentFactory("random",PLAYER1))
         self.players.append(self.AgentFactory(level,PLAYER2))
@@ -196,6 +196,8 @@ class Game:
             if(turn == 1):
                 start = time.time()            
             move = self.players[turn].execute(self.table.state)
+            moveStr = str(move[0])+move[1][0]
+            moves.append(moveStr)
             if(turn == 1):
                 end = time.time()    
                 thinking.append(end-start)
@@ -218,5 +220,5 @@ class Game:
         else: result = 0
 
         # Show the message box to inform the result
-        return thinking,result
+        return moves,thinking,result
        

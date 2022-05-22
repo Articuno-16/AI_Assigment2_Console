@@ -1,5 +1,6 @@
 import pygame
 import time
+from pandas import read_csv
 from table import *
 from support import *
 
@@ -149,7 +150,6 @@ class Minimax(Agent):
         alpha = -inf
         moves = self.getPossibleMoves(curstate, self.player_id)
         for move in moves:
-            #next_state, next_point = handleMoving(curstate, cur_point, self.player_id, move[0], move[1])
             next_state, next_point = movingTurn(curstate, cur_point, self.player_id, move[0], move[1],True)
             _, score = alpha_beta(0,1,next_state, next_point,alpha,inf)
             if score>final_score:
@@ -160,6 +160,129 @@ class Minimax(Agent):
         run_time = time.time() - start
         print("Runtime: ",run_time)
         return self.getPossibleMoves(state, self.player_id)[0] if final_action == None else final_action
+
+class NaiveBayes(Agent):
+    
+    def __init__(self, player_id, screen, table):
+        super().__init__(player_id, screen, table)
+        self.white_moves = 0
+        self.black_moves = 0
+        self.white = {}
+        self.black = {}
+        self.results = None
+        self.moves = None
+        
+    # read and save data to attributes    
+    def readData(self):
+        #count every time each move appears in a losing and winning game
+        csv = read_csv("dataset/random_1000.csv")
+        moves = csv['moves']
+        for i in range(len(moves)):
+            moves[i] = moves[i].strip('][').split(', ') # string list to list
+        self.results = list(csv["result"]) # -1 for first_player win, 1 otherwise (0 for draw)
+        self.moves = moves
+        
+    
+    # create Dictionary of {move,frequency}    
+    def initFromData(self):
+        # create dictionaries of all moves for white and black
+        store = []
+        for game in self.moves:
+            for move in game:
+                if move not in store:
+                    store.append(move)
+        for move in store:
+            self.white[move] = 1
+            self.black[move] = 1
+            
+        # check for result for each move that leads to victory
+        turn = None
+        for result in self.results:
+            index = self.results.index(result)
+            if result == -1:
+                self.white_moves += len(self.moves[index])
+                turn = 0
+                for move in self.moves[index]:
+                    # if this move is for this person
+                    if self.moves[index].index(move) % 2 == turn:
+                        # and move is available in his work_dict
+                        if move in self.white:
+                            self.white[move] += 1
+            else:
+                self.black_moves += len(self.moves[index])
+                turn = 1
+                for move in self.moves[index]:
+                    # if this move is for this person
+                    if self.moves[index].index(move) % 2 == turn:
+                        # and move is available in his work_dict
+                        if move in self.black:
+                            self.black[move] += 1
+                        
+    # Get moves that are Available: [(index,'l'),(index,'r')],[],[],..
+    def getPossibleMoves(self, state, player_id): #list of actions: [(index,'l'),(index,'r')]
+        list_of_action = []
+        if player_id == "player1":
+            for i in range(0, QUAN_1):
+                if state[i][0]: # prawns in that square
+                    list_of_action.extend([(i,'Left'), (i,'Right')])
+        else:
+            for i in range(QUAN_1+1, QUAN_2):
+                if state[i][0]:
+                    list_of_action.extend([(i,'Left'), (i,'Right')])
+
+        shuffle(list_of_action)
+        return list_of_action
+    
+    def execute(self, state_game):
+        self.readData()
+        self.initFromData()
+        self.white = normalize(self.white,self.white_moves)
+        self.black = normalize(self.black,self.black_moves)
+        
+        legal_moves = self.getPossibleMoves(state_game, self.player_id)
+        
+        # init prob list for each move (a.k.a evaluation based on data)
+        probs = []
+        for m in legal_moves:
+            # standardize "move" format
+            move = "'"+str(m[0])+m[1][0]+"'"
+            
+            # if it is a new move, add it to the dictionary with average prob
+            if move not in self.white:
+                self.white_moves += 1
+                self.white[move] = 1/self.white_moves
+            # P(A) = (times A won)/len of dataset
+            # P(B) is the prob of plyB chooses that step, always 1 (step already taken)
+            # P(B|A) = (times won by that move)/(len of A won)
+            PA = self.results.count(-1)/len(self.results)
+            PB = 1
+            PBonA = self.white[move]/self.results.count(-1)
+            winPAonB = (PBonA * PA) / PB
+            
+            # P(A) = (times plyA lose)/len of dataset
+            # P(B) is the prob of plyB chooses that step, always 1 (step already taken)
+            # P(B|A) = (times lose by that move)/(len of A lose)
+            if move not in self.black:
+                self.black_moves += 1
+                self.black[move] = 1/self.black_moves
+            PNotA = self.results.count(1)/len(self.results)
+            PB = 1
+            PBonNotA = self.black[move]/self.results.count(1)
+            losePAonB = (PBonNotA * PNotA) / PB
+            
+            # final_prob = win_prob - lose_prob
+            if self.player_id == "player1":
+                probs.append(winPAonB-losePAonB)
+            else:
+                probs.append(losePAonB-winPAonB)
+                
+        # take the final move, which has highest correspondent prob
+        # reformat the result to return         
+        final_move = legal_moves[probs.index(max(probs))]
+        if final_move[1] == "R":
+            return (int(final_move[0])),"Right"
+        return (int(final_move[0])),"Left"
+        
     
 class Human(Agent):
     def __init__(self, player_id, screen, table):
