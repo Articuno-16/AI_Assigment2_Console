@@ -165,10 +165,10 @@ class NaiveBayes(Agent):
     
     def __init__(self, player_id, screen, table):
         super().__init__(player_id, screen, table)
-        self.white_moves = 0
-        self.black_moves = 0
-        self.white = {}
-        self.black = {}
+        self.win_moves = 0
+        self.lose_moves = 0
+        self.win = {}
+        self.lose = {}
         self.results = None
         self.moves = None
         
@@ -185,38 +185,38 @@ class NaiveBayes(Agent):
     
     # create Dictionary of {move,frequency}    
     def initFromData(self):
-        # create dictionaries of all moves for white and black
+        # create dictionaries of all moves for win and lose
         store = []
         for game in self.moves:
             for move in game:
                 if move not in store:
                     store.append(move)
         for move in store:
-            self.white[move] = 1
-            self.black[move] = 1
+            self.win[move] = 1
+            self.lose[move] = 1
             
         # check for result for each move that leads to victory
         turn = None
         for result in self.results:
             index = self.results.index(result)
             if result == -1:
-                self.white_moves += len(self.moves[index])
+                self.win_moves += len(self.moves[index])
                 turn = 0
                 for move in self.moves[index]:
                     # if this move is for this person
                     if self.moves[index].index(move) % 2 == turn:
                         # and move is available in his work_dict
-                        if move in self.white:
-                            self.white[move] += 1
+                        if move in self.win:
+                            self.win[move] += 1
             else:
-                self.black_moves += len(self.moves[index])
+                self.lose_moves += len(self.moves[index])
                 turn = 1
                 for move in self.moves[index]:
                     # if this move is for this person
                     if self.moves[index].index(move) % 2 == turn:
                         # and move is available in his work_dict
-                        if move in self.black:
-                            self.black[move] += 1
+                        if move in self.lose:
+                            self.lose[move] += 1
                         
     # Get moves that are Available: [(index,'l'),(index,'r')],[],[],..
     def getPossibleMoves(self, state, player_id): #list of actions: [(index,'l'),(index,'r')]
@@ -236,8 +236,8 @@ class NaiveBayes(Agent):
     def execute(self, state_game):
         self.readData()
         self.initFromData()
-        self.white = normalize(self.white,self.white_moves)
-        self.black = normalize(self.black,self.black_moves)
+        self.win = normalize(self.win,self.win_moves)
+        self.lose = normalize(self.lose,self.lose_moves)
         
         legal_moves = self.getPossibleMoves(state_game, self.player_id)
         
@@ -248,26 +248,26 @@ class NaiveBayes(Agent):
             move = "'"+str(m[0])+m[1][0]+"'"
             
             # if it is a new move, add it to the dictionary with average prob
-            if move not in self.white:
-                self.white_moves += 1
-                self.white[move] = 1/self.white_moves
+            if move not in self.win:
+                self.win_moves += 1
+                self.win[move] = 1/self.win_moves
             # P(A) = (times A won)/len of dataset
             # P(B) is the prob of plyB chooses that step, always 1 (step already taken)
             # P(B|A) = (times won by that move)/(len of A won)
             PA = self.results.count(-1)/len(self.results)
             PB = 1
-            PBonA = self.white[move]/self.results.count(-1)
+            PBonA = self.win[move]/self.results.count(-1)
             winPAonB = (PBonA * PA) / PB
             
             # P(A) = (times plyA lose)/len of dataset
             # P(B) is the prob of plyB chooses that step, always 1 (step already taken)
             # P(B|A) = (times lose by that move)/(len of A lose)
-            if move not in self.black:
-                self.black_moves += 1
-                self.black[move] = 1/self.black_moves
+            if move not in self.lose:
+                self.lose_moves += 1
+                self.lose[move] = 1/self.lose_moves
             PNotA = self.results.count(1)/len(self.results)
             PB = 1
-            PBonNotA = self.black[move]/self.results.count(1)
+            PBonNotA = self.lose[move]/self.results.count(1)
             losePAonB = (PBonNotA * PNotA) / PB
             
             # final_prob = win_prob - lose_prob
