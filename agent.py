@@ -238,7 +238,12 @@ class NaiveBayes(Agent):
         self.initFromData()
         self.win = normalize(self.win,self.win_moves)
         self.lose = normalize(self.lose,self.lose_moves)
-        
+
+        cur_score = [self.table.player1Score, self.table.player2Score]
+        curstate , cur_point = handleBorrow(state_game, self.player_id, cur_score,True)
+        state_game = curstate
+        self.table.player1Score, self.table.player2Score = cur_point[0],cur_point[1]
+
         legal_moves = self.getPossibleMoves(state_game, self.player_id)
         
         # init prob list for each move (a.k.a evaluation based on data)
@@ -279,7 +284,7 @@ class NaiveBayes(Agent):
         # take the final move, which has highest correspondent prob
         # reformat the result to return         
         final_move = legal_moves[probs.index(max(probs))]
-
+   
         if final_move[1] == "R":
             return (int(final_move[0])),"Right"
         return (int(final_move[0])),"Left"
