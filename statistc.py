@@ -1,8 +1,8 @@
+from random import choice, randint
 from game import Game
 import pandas as pd
 import numpy as np
-
-if __name__ == "__main__":
+def getStatByLevel():
     # Chỉnh sửa 2 cái này để chạy
     level = "easy"
     scale = 10
@@ -15,9 +15,9 @@ if __name__ == "__main__":
     max_time = [] 
     min_time = []
     seq = []
-    for i in range(scale):
+    for _ in range(scale):
         game = Game()
-        thinking,result = game.statistic(first,level)
+        _m,thinking,result = game.statistic(first,level)
         seq.append(",".join(str(x) for x in thinking))
         size = len(thinking)
         res.append(result)
@@ -36,3 +36,47 @@ if __name__ == "__main__":
                         ,"thinking_time":seq})
 
     df.to_csv("statistic/{}_{}.csv".format(level,"first" if first else "second" ))
+    
+###################### DATABASE GENERATOR #######################
+from pandas import read_csv
+import pandas as pd
+from random import choice, randint
+from game import Game
+
+def createLevelDataset(level,scale):
+    move_string = []
+    res = []
+    turns = []
+    for i in range(scale):
+        first = choice([False, True])
+        turns.append(first)
+        game = Game()
+        moves,_,result = game.statistic(first,level)
+        move_string.append(moves)
+        res.append(result)
+        
+    df = pd.DataFrame({"first_player_AI":turns
+                       ,"result":res
+                        ,"moves":move_string
+                        })
+
+    df.to_csv("dataset/{}_{}.csv".format(level,scale))
+
+def createRandomDataset(scale):
+    move_string = []
+    res = []
+    for i in range(scale):
+        game = Game()
+        moves,_,result = game.statistic(True,"random")
+        move_string.append(moves)
+        res.append(result)
+        
+    df = pd.DataFrame({"result":res
+                        ,"moves":move_string
+                        })
+
+    df.to_csv("dataset/{}_{}.csv".format("random",scale))
+
+
+if __name__ == "__main__":
+    createRandomDataset(1000)
