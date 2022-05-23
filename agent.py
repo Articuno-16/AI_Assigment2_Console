@@ -175,7 +175,7 @@ class NaiveBayes(Agent):
     # read and save data to attributes    
     def readData(self):
         #count every time each move appears in a losing and winning game
-        csv = read_csv("dataset/random_1000.csv")
+        csv = read_csv("dataset/random_5000.csv")
         moves = csv['moves']
         for i in range(len(moves)):
             moves[i] = moves[i].strip('][').split(', ') # string list to list

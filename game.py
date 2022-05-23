@@ -186,7 +186,7 @@ class Game:
         turn = 0 if goFirst else 1
         moves = []
         # Change PLAYER1 or PLAYER2 to go first or seccond 
-        self.players.append(self.AgentFactory("naiveBayes",PLAYER1))
+        self.players.append(self.AgentFactory("random",PLAYER1))
         self.players.append(self.AgentFactory(level,PLAYER2))
 
         # Game loop

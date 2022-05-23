@@ -79,5 +79,5 @@ def createRandomDataset(scale):
 
 
 if __name__ == "__main__":
-    # createRandomDataset(1000)
+    #createRandomDataset(5000)
     getStatByLevel("NB")
