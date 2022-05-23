@@ -2,11 +2,11 @@ from random import choice, randint
 from game import Game
 import pandas as pd
 import numpy as np
-def getStatByLevel():
+def getStatByLevel(name):
     # Chỉnh sửa 2 cái này để chạy
-    level = "easy"
+    level = "random"
     scale = 10
-    first = False
+    first = True
 
     thinking =  []
     number_of_move = []
@@ -35,7 +35,7 @@ def getStatByLevel():
                         ,"total_move":number_of_move
                         ,"thinking_time":seq})
 
-    df.to_csv("statistic/{}_{}.csv".format(level,"first" if first else "second" ))
+    df.to_csv("statistic/{}_{}_{}.csv".format(level,"first" if first else "second",name ))
     
 ###################### DATABASE GENERATOR #######################
 from pandas import read_csv
@@ -79,4 +79,5 @@ def createRandomDataset(scale):
 
 
 if __name__ == "__main__":
-    createRandomDataset(1000)
+    # createRandomDataset(1000)
+    getStatByLevel("NB")

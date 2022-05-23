@@ -32,12 +32,14 @@ def getMenu(screen,font,fontbig):
     text1 = font.render(' A - Easy', True, color)
     text2 = font.render(' B - Medium', True, color)
     text3 = font.render(' C - Hard', True, color)
+    text4 = font.render(' N - Naive Bayes', True, color)
 
     screen.blit(label, (100,100))
-    screen.blit(noti, (200,60+150))
-    screen.blit(text1, (220,100+150))
-    screen.blit(text2, (220,130+150))
-    screen.blit(text3, (220,160+150))
+    screen.blit(noti, (200,40+150))
+    screen.blit(text1, (220,80+150))
+    screen.blit(text2, (220,110+150))
+    screen.blit(text3, (220,140+150))
+    screen.blit(text4, (220,170+150))
 
     while True:
         for event in pygame.event.get():
@@ -51,6 +53,8 @@ def getMenu(screen,font,fontbig):
                     return "medium"
                 if event.key == pygame.K_c:
                     return "hard"
+                if event.key == pygame.K_n:
+                    return "naiveBayes"
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()	
@@ -172,6 +176,8 @@ class Game:
             return Minimax(playerID,self.screen,self.table,depth=4)
         elif str == 'human':
             return Human(playerID,self.screen,self.table)
+        elif str == "naiveBayes":
+            return NaiveBayes(playerID,self.screen,self.table)
         else :
             return RandomAgent(playerID,self.screen,self.table)
 
@@ -180,7 +186,7 @@ class Game:
         turn = 0 if goFirst else 1
         moves = []
         # Change PLAYER1 or PLAYER2 to go first or seccond 
-        self.players.append(self.AgentFactory("random",PLAYER1))
+        self.players.append(self.AgentFactory("naiveBayes",PLAYER1))
         self.players.append(self.AgentFactory(level,PLAYER2))
 
         # Game loop
