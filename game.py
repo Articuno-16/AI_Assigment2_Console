@@ -181,19 +181,27 @@ class Game:
         else :
             return RandomAgent(playerID,self.screen,self.table)
 
-    def statistic(self, goFirst, level):
+    def statistic(self, goFirst, level,p1=None,p2=None):
         # User go first or agent go first
         turn = 0 if goFirst else 1
         moves = []
         # Change PLAYER1 or PLAYER2 to go first or seccond 
-        self.players.append(self.AgentFactory("naiveBayes",PLAYER1))
-        self.players.append(self.AgentFactory(level,PLAYER2))
-
+        if p1 is None and p2 is None:
+            self.players.append(self.AgentFactory("random",PLAYER1))
+            self.players.append(self.AgentFactory(level,PLAYER2))
+        else:
+            self.players.append(self.AgentFactory(p1,PLAYER1))
+            self.players.append(self.AgentFactory(p2,PLAYER2))
+            if p1 == "naiveBayes":
+                self.players[0].get_dataset("dataset/random_1000.csv")
+            if p2 == "naiveBayes":
+                self.players[1].get_dataset("dataset/random_1000.csv")
+            
         # Game loop
         thinking = []
         self.redraw(turn)
+
         while not self.finished():
-            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -211,7 +219,6 @@ class Game:
 
             turn ^= 1
             self.redraw(turn)
-
         self.redraw(turn)
      
 

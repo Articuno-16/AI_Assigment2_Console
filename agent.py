@@ -171,16 +171,24 @@ class NaiveBayes(Agent):
         self.lose = {}
         self.results = None
         self.moves = None
-        
-    # read and save data to attributes    
-    def readData(self):
-        #count every time each move appears in a losing and winning game
-        csv = read_csv("dataset/random_1000.csv")
+        self.dataset = "dataset/random_1000.csv"
+
+    def get_dataset(self,dataset):
+        self.dataset=dataset
+        csv = read_csv(self.dataset)
         moves = csv['moves']
         for i in range(len(moves)):
             moves[i] = moves[i].strip('][').split(', ') # string list to list
         self.results = list(csv["result"]) # -1 for first_player win, 1 otherwise (0 for draw)
         self.moves = moves
+    # # read and save data to attributes    
+    # def readData(self):
+    #     #count every time each move appears in a losing and winning game
+    #     moves = self.csv['moves']
+    #     for i in range(len(moves)):
+    #         moves[i] = moves[i].strip('][').split(', ') # string list to list
+    #     self.results = list(self.csv["result"]) # -1 for first_player win, 1 otherwise (0 for draw)
+    #     self.moves = moves
         
     
     # create Dictionary of {move,frequency}    
@@ -234,17 +242,14 @@ class NaiveBayes(Agent):
         return list_of_action
     
     def execute(self, state_game):
-        self.readData()
+        # self.readData()
         self.initFromData()
         self.win = normalize(self.win,self.win_moves)
         self.lose = normalize(self.lose,self.lose_moves)
 
-        cur_score = [self.table.player1Score, self.table.player2Score]
-        curstate , cur_point = handleBorrow(state_game, self.player_id, cur_score,True)
-        state_game = curstate
-        self.table.player1Score, self.table.player2Score = cur_point[0],cur_point[1]
-
-        legal_moves = self.getPossibleMoves(state_game, self.player_id)
+        score = [self.table.player1Score, self.table.player2Score]
+        self.table.state, [self.table.player1Score, self.table.player2Score] = handleBorrow(self.table.state, self.player_id, score,True)
+        legal_moves = self.getPossibleMoves(self.table.state, self.player_id)
         
         # init prob list for each move (a.k.a evaluation based on data)
         probs = []
@@ -284,10 +289,7 @@ class NaiveBayes(Agent):
         # take the final move, which has highest correspondent prob
         # reformat the result to return         
         final_move = legal_moves[probs.index(max(probs))]
-   
-        if final_move[1] == "R":
-            return (int(final_move[0])),"Right"
-        return (int(final_move[0])),"Left"
+        return final_move
         
     
 class Human(Agent):

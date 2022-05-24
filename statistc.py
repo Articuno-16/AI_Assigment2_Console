@@ -2,7 +2,7 @@ from random import choice, randint
 from game import Game
 import pandas as pd
 import numpy as np
-def getStatByLevel(name):
+def getStatByLevel(name,p1=None,p2=None):
     # Chỉnh sửa 2 cái này để chạy
     level = "random"
     scale = 10
@@ -17,7 +17,11 @@ def getStatByLevel(name):
     seq = []
     for _ in range(scale):
         game = Game()
-        _m,thinking,result = game.statistic(first,level)
+        if p1 is None and p2 is None:
+            _m,thinking,result = game.statistic(first,level)
+        else:
+            _m,thinking,result = game.statistic(first,level,p1,p2)            
+        print(_m)
         seq.append(",".join(str(x) for x in thinking))
         size = len(thinking)
         res.append(result)
@@ -79,5 +83,5 @@ def createRandomDataset(scale):
 
 
 if __name__ == "__main__":
-    # createRandomDataset(1000)
-    getStatByLevel("NB")
+    # createRandomDataset(1001) # gen for P2
+    getStatByLevel("NB","naiveBayes","naiveBayes")
