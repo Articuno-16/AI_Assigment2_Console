@@ -175,7 +175,7 @@ class NaiveBayes(Agent):
     # read and save data to attributes    
     def readData(self):
         #count every time each move appears in a losing and winning game
-        csv = read_csv("dataset/random_1000.csv")
+        csv = read_csv("dataset/random_10.csv")
         moves = csv['moves']
         for i in range(len(moves)):
             moves[i] = moves[i].strip('][').split(', ') # string list to list
@@ -284,10 +284,8 @@ class NaiveBayes(Agent):
         # take the final move, which has highest correspondent prob
         # reformat the result to return         
         final_move = legal_moves[probs.index(max(probs))]
-   
-        if final_move[1] == "R":
-            return (int(final_move[0])),"Right"
-        return (int(final_move[0])),"Left"
+
+        return final_move[0],final_move[1]
         
     
 class Human(Agent):

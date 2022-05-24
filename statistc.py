@@ -5,7 +5,7 @@ import numpy as np
 def getStatByLevel(name):
     # Chỉnh sửa 2 cái này để chạy
     level = "random"
-    scale = 10
+    scale = 1
     first = True
 
     thinking =  []
@@ -18,6 +18,7 @@ def getStatByLevel(name):
     for _ in range(scale):
         game = Game()
         _m,thinking,result = game.statistic(first,level)
+        print(_m)
         seq.append(",".join(str(x) for x in thinking))
         size = len(thinking)
         res.append(result)
