@@ -284,10 +284,7 @@ class NaiveBayes(Agent):
         # take the final move, which has highest correspondent prob
         # reformat the result to return         
         final_move = legal_moves[probs.index(max(probs))]
-   
-        if final_move[1] == "R":
-            return (int(final_move[0])),"Right"
-        return (int(final_move[0])),"Left"
+        return final_move
         
     
 class Human(Agent):
