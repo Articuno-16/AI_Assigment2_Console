@@ -134,8 +134,6 @@ class Game:
                         
             move = self.players[turn].execute(self.table.state)
             self.update(self.players[turn].player_id,move)
-
-            print(f"USER_{turn}'s move: {move[0]} {move[1]}")
             turn ^= 1
             self.redraw(turn)
 
@@ -151,7 +149,6 @@ class Game:
         else: result = 'Draw'
 
         # Show the message box to inform the result
-        print(result)
         while True:
             # tk.Tk().wm_withdraw()  # to hide the main window
             messagebox.showinfo('End Game !', 'Result: ' + result)

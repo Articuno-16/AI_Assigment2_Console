@@ -5,7 +5,7 @@ import numpy as np
 def getStatByLevel(name,p1=None,p2=None):
     # Chỉnh sửa 2 cái này để chạy
     level = "random"
-    scale = 10
+    scale = 100
     first = True
 
     thinking =  []
@@ -15,12 +15,14 @@ def getStatByLevel(name,p1=None,p2=None):
     max_time = [] 
     min_time = []
     seq = []
-    for _ in range(scale):
+    for i in range(scale):
         game = Game()
         if p1 is None and p2 is None:
             _m,thinking,result = game.statistic(first,level)
         else:
-            _m,thinking,result = game.statistic(first,level,p1,p2)            
+            _m,thinking,result = game.statistic(first,level,p1,p2)    
+        print(i)
+        print(result)        
         print(_m)
         seq.append(",".join(str(x) for x in thinking))
         size = len(thinking)
@@ -29,7 +31,6 @@ def getStatByLevel(name,p1=None,p2=None):
         number_of_move.append(size)
         total_thinking_time.append(np.sum(thinking))
         max_time.append(np.max(thinking))
-        print(np.amin(thinking))
         min_time.append(np.min(thinking))
     
     df = pd.DataFrame({ "result":res
@@ -55,12 +56,11 @@ def createLevelDataset(level,scale):
         first = choice([False, True])
         turns.append(first)
         game = Game()
-        moves,_,result = game.statistic(first,level)
+        moves,_,result = game.statistic(first,level,level,level)
         move_string.append(moves)
         res.append(result)
         
-    df = pd.DataFrame({"first_player_AI":turns
-                       ,"result":res
+    df = pd.DataFrame({  "result":res
                         ,"moves":move_string
                         })
 
@@ -83,5 +83,5 @@ def createRandomDataset(scale):
 
 
 if __name__ == "__main__":
-    # createRandomDataset(1001) # gen for P2
-    getStatByLevel("NB","naiveBayes","naiveBayes")
+    createLevelDataset("naiveBayes",1) # gen for P2
+    #getStatByLevel("NB","random","naiveBayes")

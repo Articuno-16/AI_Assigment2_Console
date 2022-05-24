@@ -77,13 +77,13 @@ class Table:
         score = [self.player1Score, self.player2Score]
         self.state, [self.player1Score, self.player2Score] = handleBorrow(self.state, player, score)
 
-        text = 'Turn {}: {} chọn ô {}, hướng {}'
-        print(text.format(self.turn + 1, player, index, direction))
+        # text = 'Turn {}: {} chọn ô {}, hướng {}'
+        # print(text.format(self.turn + 1, player, index, direction))
         c1, swap = None, False
 
         while True:
             if swap is True:
-                print('Change Turn!')
+                # print('Change Turn!')
                 self.turn += 1
                 return self.validFinish()
             
@@ -105,11 +105,12 @@ class Table:
 
     # draw table to console
     def drawTable(self, arr = None):
-        if arr is None:
-            arr = self.initDrawTable()
-        print(self.draw.format(*arr))
-        text = """        Player1's score: {}   Player2's score: {}\n"""
-        print(text.format(self.player1Score, self.player2Score))
+        pass
+        # if arr is None:
+        #     arr = self.initDrawTable()
+        # print(self.draw.format(*arr))
+        # text = """        Player1's score: {}   Player2's score: {}\n"""
+        # print(text.format(self.player1Score, self.player2Score))
         # self.validFinish() 
 
     '''Checking whether if Game is finished'''
