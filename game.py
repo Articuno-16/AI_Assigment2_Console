@@ -190,7 +190,7 @@ class Game:
             self.players.append(self.AgentFactory(p1,PLAYER1))
             self.players.append(self.AgentFactory(p2,PLAYER2))
             if p1 == "naiveBayes":
-                self.players[0].get_dataset("dataset/random_1000.csv")
+                self.players[0].get_dataset("dataset/naiveBayes_500.csv")
             if p2 == "naiveBayes":
                 self.players[1].get_dataset("dataset/random_1000.csv")
             

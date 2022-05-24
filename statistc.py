@@ -83,5 +83,5 @@ def createRandomDataset(scale):
 
 
 if __name__ == "__main__":
-    createLevelDataset("naiveBayes",1) # gen for P2
-    #getStatByLevel("NB","random","naiveBayes")
+    createLevelDataset("naiveBayes",500) # gen for P2
+    # getStatByLevel("NB","naiveBayes","random")
