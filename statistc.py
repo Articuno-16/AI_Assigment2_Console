@@ -40,7 +40,7 @@ def getStatByLevel(name,p1=None,p2=None):
                         ,"total_move":number_of_move
                         ,"thinking_time":seq})
 
-    df.to_csv("statistic/{}_{}_{}.csv".format(level,"first" if first else "second",name ))
+    df.to_csv("statistic/{}_{}_{}.csv".format("NB","first" if first else "second",name ))
     
 ###################### DATABASE GENERATOR #######################
 from pandas import read_csv
@@ -83,5 +83,5 @@ def createRandomDataset(scale):
 
 
 if __name__ == "__main__":
-    createLevelDataset("naiveBayes",500) # gen for P2
-    # getStatByLevel("NB","naiveBayes","random")
+    # createLevelDataset("naiveBayes",500) # gen for P2
+    getStatByLevel("NB","naiveBayes","naiveBayes")

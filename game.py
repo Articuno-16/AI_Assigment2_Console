@@ -9,7 +9,7 @@ import pandas as pd
 from GUI import TableGUI,SCREEN_WIDTH,SCREEN_HEIGHT,SCREEN_CAPTION,USER_GO_FIRST,RES
 PLAYER1 = 'player1'
 PLAYER2 = 'player2'
-
+dataset = "dataset/random_1000.csv"
 
 
 def text_to_screen(screen, text, x, y, fontsize, color):
@@ -119,6 +119,8 @@ class Game:
         # Change PLAYER1 or PLAYER2 to go first or seccond 
         self.players.append(self.AgentFactory("human",PLAYER1))
         self.players.append(self.AgentFactory(level,PLAYER2))
+        if(level == "naiveBayes"):
+            self.players[1].get_dataset(dataset)
 
         turn = goFirst(self.screen,self.font,self.fontbig)
 
@@ -162,6 +164,8 @@ class Game:
         level = getMenu(self.screen,self.font,self.fontbig)
         self.players.append(self.AgentFactory('human',PLAYER1))
         self.players.append(self.AgentFactory(level,PLAYER2))
+        if(level == "naiveBayes"):
+            self.players[1].get_dataset(dataset)
 
 
     def AgentFactory(self,str,playerID):
