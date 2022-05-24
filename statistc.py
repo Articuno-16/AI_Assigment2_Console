@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 def getStatByLevel(name):
     # Chỉnh sửa 2 cái này để chạy
-    level = "random"
+    level = "easy"
     scale = 10
     first = True
 
