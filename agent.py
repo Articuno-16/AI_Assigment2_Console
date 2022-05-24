@@ -171,11 +171,14 @@ class NaiveBayes(Agent):
         self.lose = {}
         self.results = None
         self.moves = None
-        
+        self.dataset = "dataset/random_1000.csv"
+
+    def get_dataset(self,dataset):
+        self.dataset=dataset
     # read and save data to attributes    
     def readData(self):
         #count every time each move appears in a losing and winning game
-        csv = read_csv("dataset/random_1000.csv")
+        csv = read_csv(self.dataset)
         moves = csv['moves']
         for i in range(len(moves)):
             moves[i] = moves[i].strip('][').split(', ') # string list to list
@@ -240,8 +243,8 @@ class NaiveBayes(Agent):
         self.lose = normalize(self.lose,self.lose_moves)
 
         score = [self.table.player1Score, self.table.player2Score]
-        self.table.state, [self.table.player1Score, self.table.player2Score] = handleBorrow(self.table.state, "player2", score,True)
-        legal_moves = self.getPossibleMoves(state_game, self.player_id)
+        self.table.state, [self.table.player1Score, self.table.player2Score] = handleBorrow(self.table.state, self.player_id, score,True)
+        legal_moves = self.getPossibleMoves(self.table.state, self.player_id)
         
         # init prob list for each move (a.k.a evaluation based on data)
         probs = []
