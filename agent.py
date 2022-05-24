@@ -175,15 +175,20 @@ class NaiveBayes(Agent):
 
     def get_dataset(self,dataset):
         self.dataset=dataset
-    # read and save data to attributes    
-    def readData(self):
-        #count every time each move appears in a losing and winning game
         csv = read_csv(self.dataset)
         moves = csv['moves']
         for i in range(len(moves)):
             moves[i] = moves[i].strip('][').split(', ') # string list to list
         self.results = list(csv["result"]) # -1 for first_player win, 1 otherwise (0 for draw)
         self.moves = moves
+    # # read and save data to attributes    
+    # def readData(self):
+    #     #count every time each move appears in a losing and winning game
+    #     moves = self.csv['moves']
+    #     for i in range(len(moves)):
+    #         moves[i] = moves[i].strip('][').split(', ') # string list to list
+    #     self.results = list(self.csv["result"]) # -1 for first_player win, 1 otherwise (0 for draw)
+    #     self.moves = moves
         
     
     # create Dictionary of {move,frequency}    
@@ -237,7 +242,7 @@ class NaiveBayes(Agent):
         return list_of_action
     
     def execute(self, state_game):
-        self.readData()
+        # self.readData()
         self.initFromData()
         self.win = normalize(self.win,self.win_moves)
         self.lose = normalize(self.lose,self.lose_moves)

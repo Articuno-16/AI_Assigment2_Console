@@ -5,7 +5,7 @@ import numpy as np
 def getStatByLevel(name,p1=None,p2=None):
     # Chỉnh sửa 2 cái này để chạy
     level = "random"
-    scale = 1
+    scale = 10
     first = True
 
     thinking =  []
@@ -84,4 +84,4 @@ def createRandomDataset(scale):
 
 if __name__ == "__main__":
     # createRandomDataset(1001) # gen for P2
-    getStatByLevel("NB","naiveBayes","random")
+    getStatByLevel("NB","naiveBayes","naiveBayes")
