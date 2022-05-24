@@ -207,12 +207,12 @@ class Game:
                     pygame.quit()
                     sys.exit()		
             start = end = 0
-            if(turn == 1):
+            if(turn == 0):
                 start = time.time()            
             move = self.players[turn].execute(self.table.state)
             moveStr = str(move[0])+move[1][0]
             moves.append(moveStr)
-            if(turn == 1):
+            if(turn == 0):
                 end = time.time()    
                 thinking.append(end-start)
             self.update(self.players[turn].player_id,move)

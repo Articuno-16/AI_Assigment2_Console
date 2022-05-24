@@ -5,8 +5,8 @@ import numpy as np
 def getStatByLevel(name,p1=None,p2=None):
     # Chỉnh sửa 2 cái này để chạy
     level = "random"
-    scale = 10
-    first = True
+    scale = 50
+    first = False
 
     thinking =  []
     number_of_move = []
@@ -14,7 +14,7 @@ def getStatByLevel(name,p1=None,p2=None):
     res = [] 
     max_time = [] 
     min_time = []
-    seq = []
+    fm_time = []
     for _ in range(scale):
         game = Game()
         if p1 is None and p2 is None:
@@ -22,7 +22,6 @@ def getStatByLevel(name,p1=None,p2=None):
         else:
             _m,thinking,result = game.statistic(first,level,p1,p2)            
         print(_m)
-        seq.append(",".join(str(x) for x in thinking))
         size = len(thinking)
         res.append(result)
         thinking = np.array(thinking,dtype=np.float32)
@@ -31,13 +30,14 @@ def getStatByLevel(name,p1=None,p2=None):
         max_time.append(np.max(thinking))
         print(np.amin(thinking))
         min_time.append(np.min(thinking))
+        fm_time.append(thinking[0])
     
     df = pd.DataFrame({ "result":res
                         ,"max_time":max_time
                         ,"min_time":min_time
                         ,"total_thinking_time":total_thinking_time
                         ,"total_move":number_of_move
-                        ,"thinking_time":seq})
+                        ,"time_for_first_move":fm_time})
 
     df.to_csv("statistic/{}_{}_{}.csv".format(level,"first" if first else "second",name ))
     
@@ -84,4 +84,4 @@ def createRandomDataset(scale):
 
 if __name__ == "__main__":
     # createRandomDataset(1001) # gen for P2
-    getStatByLevel("NB","naiveBayes","naiveBayes")
+    getStatByLevel("NB","naiveBayes","random")
