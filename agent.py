@@ -171,7 +171,7 @@ class NaiveBayes(Agent):
         self.lose = {}
         self.results = None
         self.moves = None
-        self.dataset = "dataset/random_1000.csv"
+        self.dataset = "dataset/random_5000.csv"
 
     def get_dataset(self,dataset):
         self.dataset=dataset
@@ -181,16 +181,7 @@ class NaiveBayes(Agent):
             moves[i] = moves[i].strip('][').split(', ') # string list to list
         self.results = list(csv["result"]) # -1 for first_player win, 1 otherwise (0 for draw)
         self.moves = moves
-    # # read and save data to attributes    
-    # def readData(self):
-    #     #count every time each move appears in a losing and winning game
-    #     moves = self.csv['moves']
-    #     for i in range(len(moves)):
-    #         moves[i] = moves[i].strip('][').split(', ') # string list to list
-    #     self.results = list(self.csv["result"]) # -1 for first_player win, 1 otherwise (0 for draw)
-    #     self.moves = moves
-        
-    
+          
     # create Dictionary of {move,frequency}    
     def initFromData(self):
         # create dictionaries of all moves for win and lose
@@ -241,8 +232,7 @@ class NaiveBayes(Agent):
         shuffle(list_of_action)
         return list_of_action
     
-    def execute(self, state_game):
-        # self.readData()
+    def execute(self,state_game):
         self.initFromData()
         self.win = normalize(self.win,self.win_moves)
         self.lose = normalize(self.lose,self.lose_moves)
@@ -262,7 +252,7 @@ class NaiveBayes(Agent):
                 self.win_moves += 1
                 self.win[move] = 1/self.win_moves
             # P(A) = (times A won)/len of dataset
-            # P(B) is the prob of plyB chooses that step, always 1 (step already taken)
+            # P(B) is the prob of plyA chooses that step, always 1 (step already taken)
             # P(B|A) = (times won by that move)/(len of A won)
             PA = self.results.count(-1)/len(self.results)
             PB = 1
@@ -270,7 +260,7 @@ class NaiveBayes(Agent):
             winPAonB = (PBonA * PA) / PB
             
             # P(A) = (times plyA lose)/len of dataset
-            # P(B) is the prob of plyB chooses that step, always 1 (step already taken)
+            # P(B) is the prob of plyA chooses that step, always 1 (step already taken)
             # P(B|A) = (times lose by that move)/(len of A lose)
             if move not in self.lose:
                 self.lose_moves += 1
