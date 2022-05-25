@@ -3,7 +3,7 @@ import time
 from pandas import read_csv
 from table import *
 from support import *
-
+import math
 import os
 from GUI import RES,QUANVALUE
 from random import randint,choice,shuffle

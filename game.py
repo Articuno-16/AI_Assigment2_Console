@@ -9,7 +9,7 @@ import pandas as pd
 from GUI import TableGUI,SCREEN_WIDTH,SCREEN_HEIGHT,SCREEN_CAPTION,USER_GO_FIRST,RES
 PLAYER1 = 'player1'
 PLAYER2 = 'player2'
-dataset = "dataset/random_1000.csv"
+dataset = "dataset/naiveBayes_1000.csv"
 
 
 def text_to_screen(screen, text, x, y, fontsize, color):
@@ -170,7 +170,7 @@ class Game:
 
     def AgentFactory(self,str,playerID):
         if str == "easy":
-            return NaiveBayes(playerID,self.screen,self.table)
+            return Minimax(playerID,self.screen,self.table,depth=2)
         elif str == 'medium':
             return Minimax(playerID,self.screen,self.table,depth=3)
         elif str == 'hard':
@@ -194,7 +194,7 @@ class Game:
             self.players.append(self.AgentFactory(p1,PLAYER1))
             self.players.append(self.AgentFactory(p2,PLAYER2))
             if p1 == "naiveBayes":
-                self.players[0].get_dataset("dataset/naiveBayes_500.csv")
+                self.players[0].get_dataset("dataset/naiveBayes_1000.csv")
             if p2 == "naiveBayes":
                 self.players[1].get_dataset("dataset/random_1000.csv")
             
@@ -220,6 +220,9 @@ class Game:
 
             turn ^= 1
             self.redraw(turn)
+            
+            if(self.table.player1Score <= -15 or self.table.player2Score <= -15):
+                break
         self.redraw(turn)
      
 
